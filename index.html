@@ -1,0 +1,3306 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>ThoughtStream</title>
+        <!-- Removed Three.js library // CHANGE MADE HERE -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+        <style>
+
+.hidden {
+    display: none !important;
+}
+
+
+.task {
+    position: absolute;
+    display: inline-block;
+    padding: 10px 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    transition: all 0.4s ease;
+    cursor: pointer;
+}
+
+.task:hover {
+    transform: scale(1.4);
+}
+
+.task.modal-active {
+    z-index: 1001;
+    transition: transform 0.3s ease-out;
+}
+
+/* .task.lowLeisure */
+.task.lowLeisure {
+    padding: 4px 10px;
+    border-radius: 30px;
+    border: 1px solid;
+    font-size: 7px;
+}
+
+/* .task.low */
+.task.low {
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: 1.2px solid;
+    font-size: 9px;
+}
+
+/* .task.lightMedium */
+.task.lightMedium {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 2px solid;
+    font-size: 13px;
+}
+
+/* .task.medium */
+.task.medium {
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: 2px solid;
+    font-size: 15px;
+}
+
+/* .task.normalHigh */
+.task.normalHigh {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 2px solid;
+    font-size: 18px;
+}
+
+/* .task.urgentHigh */
+.task.urgentHigh {
+    padding: 12px 20px;
+    border-radius: 6px;
+    border: 2px solid;
+    font-size: 20px;
+}
+
+/* .task.OVERDUE */
+.task.overdue {
+    padding: 14px 30px;
+    border-radius: 0;
+    border: 3px solid;
+    font-size: 24px;
+}
+
+            /* General Styles for Vibrant */
+            body, html {
+                margin: 0;
+                padding: 0;
+                height: 100%;
+                overflow: hidden;
+                position: relative;
+                background: linear-gradient(40deg, blue, rgb(141, 33, 107), rgb(174, 151, 58),blue, rgb(141, 33, 107), rgb(174, 151, 58),blue, rgb(141, 33, 107), rgb(174, 151, 58),blue, rgb(141, 33, 107), rgb(174, 151, 58),blue, rgb(141, 33, 107), rgb(174, 151, 58));
+                background-size: 2100% 2100%; /* Expand the gradient to allow seamless movement */
+                animation: gradientLoop 210s linear infinite;
+                transition: all .8s;
+            }
+
+            @keyframes gradientLoop {
+                0% {
+                    background-position: 0% 50%;
+                }
+                100% {
+                    background-position: 100% 50%;
+                }
+            }
+
+            /* Top Bar */
+            .top-bar {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 15px 20px;
+                background: linear-gradient(to right, #ff7777b1, #ffef74, #00ff8cd0, #5190f4e8, #ff7eade9, #e44d4ddf);
+                border-bottom: 4px solid #ff0000b7;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                border-radius: 0 0 20px 20px;
+                color: #0c7902;
+                text-transform: uppercase;
+                font-weight: bold;
+                letter-spacing: 1px;
+                position: fixed;
+                top: 0;
+                width: 100%;
+                z-index: 1000;
+                opacity: 0.8;
+            }
+
+            .top-left, .top-center, .top-right {
+                flex: 1;
+                text-align: center;
+            }
+
+            .top-left {
+                text-align: left;
+                padding-left: 20px;
+            }
+
+            .top-right {
+                text-align: right;
+                padding-right: 20px;
+            }
+
+            /* STREAM TAB CONTAINER */
+            .tab-container {
+                position: fixed;
+                width: 100%;
+                top: 10%;
+            }
+            .tab-view-btn {
+      display: flex;
+      position: absolute;
+      bottom: -5vh;
+      left: 2.5vw;
+      width: 4em;
+      margin-left: -2em;
+      margin-right: -4em;
+      height: 4em;
+      cursor: pointer;
+      opacity: 0.9;
+      touch-action: manipulation;
+      transform: translateY(-5em);
+      transition: all 0.3s ease;
+      animation: cloudhue 5s infinite linear;
+    }
+
+        @keyframes cloudhue {
+            0% {
+                filter: hue-rotate(0deg);
+                }
+                100% {
+                    filter:hue-rotate(-360deg);
+                    }
+                }
+
+                @keyframes cloudhue2 {
+            0% {
+                filter: blur(0px)hue-rotate(0deg);
+                }
+                50%{ filter: blur(10px)hue-rotate(0deg);}
+                100% {
+                    filter:blur(0px) hue-rotate(-360deg);
+                    }
+                }
+
+
+            .tab-new-btn {
+                margin-right: auto;
+                display: fixed;
+                position: absolute;
+                left: 49vw;
+    cursor: pointer;
+    width: fit-content;
+    font-size: .8em;
+    margin-left: 5px;
+    border-radius: 20px;
+    top:-4vh;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.332);
+    transition: all 0.3s ease;
+
+            }
+            .tab-view-btn:hover {
+                opacity: 1;
+                filter:contrast(100);
+                transform: translateY(-6.5em)scale(1.2);     
+                animation:cloudhue2 1.7s infinite linear;           
+            }
+            
+            .tab-new-btn:hover {
+                 filter: brightness(10);
+            }
+            .tab-list {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 15px;
+                flex-wrap: wrap;
+                margin: 0 10px;
+            }
+
+            .stream-tab {
+                background-color: rgba(210, 0, 0, 0.2);
+                border: 1px dashed #fff;
+                border-radius: 20px;
+                color: white;
+                opacity: 0.5;
+                padding: 5px 15px;
+                cursor: pointer;
+                transition: background-color 0.3s, transform 0.3s;
+            } 
+
+            .stream-tab.active {
+                background-color: rgba(196, 162, 26, 0.8);
+                border: 5px double #ffe100;
+                transform: scale(1.21);
+                opacity: 1;
+            }
+
+            .stream-tab:hover {
+                background-color: rgba(1, 46, 77, 0.6);
+            }
+
+             .main-area {
+                position: relative;
+                width: 100%;
+                height: calc(100vh - 160px); /* Account for top and bottom bars plus padding */
+                margin: 0px;/* Adjust margins to account for top and bottom bars */
+                overflow: hidden;
+                box-sizing:content-box;
+            }
+
+            .task {
+    position: absolute;
+    display: inline-block;
+    padding: 10px 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    transition: all 0.4s ease;
+    cursor: pointer;
+}
+
+
+            .task:hover {
+                transform: scale(1.4);
+                box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            }
+
+            .task.modal-active {
+                z-index: 1001;
+                transition: transform 0.3s ease-out;
+            }
+
+        
+/* .task.lowLeisure */
+.task.lowLeisure {
+    padding: 4px 10px;
+    background: #00A1FF;
+    border-radius: 30px;
+    border: 1px solid yellow;
+    color: white;
+    opacity: 0.5;
+    font-size: 7px;
+}
+
+/* .task.low */
+.task.low {
+    padding: 10px 20px;
+    background: #00A1FF;
+    border-radius: 10px;
+    border: 1.2px solid white;
+    color: white;
+    opacity: 1;
+    font-size: 9px;
+}
+
+/* .task.lightMedium */
+.task.lightMedium {
+    padding: 8px 16px;
+    background: #FFFF00;
+    border-radius: 20px;
+    border: 2px solid #FFF;
+    box-shadow: 1px 1px 2px #ccc;
+    color: #333;
+    text-shadow: 1px 1px 1px #aaa;
+    opacity: 1;
+    font-size: 13px;
+}
+
+/* .task.Medium */
+.task.medium {
+    padding: 10px 20px;
+    background: #FFC107;
+    border-radius: 10px;
+    border: 2px solid hotpink; /* Example border color */
+    color: black;
+    opacity: 1;
+    font-size: 15px;
+}
+
+/* .task.normalHigh */
+.task.normalHigh {
+    padding: 10px 20px;
+    background: #F48FB1;
+    border-radius: 8px;
+    border: 2px solid #AD1457; /* Example border color */
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    color: #4E342E;
+    opacity: 1;
+    font-size: 18px;
+}
+
+/* .task.urgentHigh */
+.task.urgentHigh {
+    padding: 12px 20px;
+    background: #B71C1C;
+    border-radius: 6px;
+    border: 2px solid #880000; /* Example border color */
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.4);
+    color: #FFD700;
+    opacity: 1;
+    font-size: 20px;
+}
+
+/* .task.OVERDUE */
+.task.overdue {
+    padding: 14px 30px;
+    background: #000;
+    border-radius: 0;
+    border: 3px solid #8B0000; /* Example border color */
+    box-shadow: 6px 6px 0 #B71C1C;
+    color: white;
+    opacity: 1;
+    font-size: 24px;
+}
+
+            @keyframes urgentHighPulse {
+                0% {
+                    background-color: rgba(183, 28, 28, 0.3);
+                }
+                50% {
+                    background-color: rgba(183, 28, 28, 0.6);
+                }
+                100% {
+                    background-color: rgba(183, 28, 28, 0.3);
+                }
+            }
+
+            /* Appointment Modal Styles */
+            .appointment-content {
+                background: #e8f4ff;
+                border-radius: 20px;
+                padding: 20px;
+                width: 400px !important;
+                position: relative;
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+
+            .appointment-title-input {
+                font-size: 18px;
+                font-weight: bold;
+                border: none;
+                background: transparent;
+                width: 100%;
+                margin-right: 20px;
+                padding: 5px;
+                border-radius: 5px;
+            }
+
+            /* Timer Mode Styles */
+            .timer-mode-section {
+                margin: 20px 0;
+            }
+
+            .timer-mode {
+                display: none;
+                background: white;
+                padding: 15px;
+                border-radius: 10px;
+                margin-bottom: 15px;
+            }
+
+            .timer-mode.active {
+                display: block;
+            }
+
+            .timer-input-group {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 5px;
+                margin-bottom: 10px;
+            }
+
+            .timer-input-group input {
+                width: 60px;
+                text-align: center;
+                padding: 8px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                font-size: 18px;
+            }
+
+            .timer-input-group span {
+                font-size: 20px;
+                font-weight: bold;
+            }
+
+            .due-date-input {
+                width: 100%;
+                padding: 8px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                margin-bottom: 10px;
+            }
+
+            /* Timer Display Styles */
+            .timer-display {
+                text-align: center;
+                margin: 20px 0;
+                padding: 15px;
+                background: white;
+                border-radius: 10px;
+            }
+
+            .time-remaining {
+                font-size: 36px;
+                font-weight: bold;
+                color: #1a3c5c;
+                margin-bottom: 10px;
+            }
+
+            .timer-controls {
+                display: flex;
+                justify-content: center;
+                gap: 15px;
+                margin: 15px 0;
+            }
+
+            .timer-controls button {
+                font-size: 24px;
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: 5px 10px;
+                border-radius: 5px;
+                transition: background-color 0.2s;
+            }
+
+            .timer-controls button:hover {
+                background-color: rgba(0, 0, 0, 0.1);
+            }
+
+            .timer-status {
+                font-size: 14px;
+                color: #666;
+            }
+
+            /* Task Section Styles */
+            .task-section {
+                margin-top: 20px;
+            }
+
+            .task-controls {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 15px;
+            }
+
+            .task-input {
+                flex-grow: 1;
+                padding: 8px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+
+            .add-task-btn,
+            .import-tasks-btn,
+            .start-timer-btn,
+            .set-due-date-btn {
+                background: #1a3c5c;
+                color: white;
+                border: none;
+                padding: 8px 15px;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.2s;
+            }
+
+            .add-task-btn:hover,
+            .import-tasks-btn:hover,
+            .start-timer-btn:hover,
+            .set-due-date-btn:hover {
+                background: #2a4c6c;
+            }
+
+            .appointment-title-input:focus {
+                outline: none;
+                background: rgba(255, 255, 255, 0.5);
+            }
+
+            .timer-controls {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                margin-bottom: 15px;
+            }
+
+            .timer-input {
+                width: 60px;
+                padding: 5px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                text-align: center;
+            }
+
+            .timer-set-btn {
+                background: #1a3c5c;
+                color: white;
+                border: none;
+                padding: 5px 15px;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+            .task-controls {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 15px;
+            }
+
+            .task-input {
+                flex-grow: 1;
+                padding: 5px 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+
+            .task-time-input {
+                width: 60px;
+                padding: 5px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                text-align: center;
+            }
+
+            .add-task-btn {
+                background: #1a3c5c;
+                color: white;
+                border: none;
+                padding: 5px 15px;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+            .delete-task {
+                background: none;
+                border: none;
+                color: rgba(255, 255, 255, 0.7);
+                font-size: 18px;
+                cursor: pointer;
+                padding: 0 5px;
+            }
+
+            .delete-task:hover {
+                color: white;
+            }
+
+            .appointment-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+
+            .appointment-title {
+                font-size: 18px;
+                font-weight: bold;
+            }
+
+            .appointment-icons {
+                display: flex;
+                gap: 20px;
+            }
+
+            .icon {
+                font-size: 24px;
+            }
+
+            .timer-section {
+                text-align: center;
+                margin: 20px 0;
+            }
+
+            .time-remaining {
+                font-size: 32px;
+                font-weight: bold;
+                color: #ff1493;
+                background: #fff;
+                padding: 5px 15px;
+                border-radius: 25px;
+                display: inline-block;
+            }
+
+            .time-remaining span {
+                font-size: 16px;
+                margin-left: 5px;
+            }
+
+            .pause-btn {
+                font-size: 24px;
+                background: none;
+                border: none;
+                cursor: pointer;
+                margin: 10px 0;
+            }
+
+            .timer-status {
+                font-size: 14px;
+                color: #666;
+                margin-top: 10px;
+            }
+
+            .task-list {
+                margin-top: 20px;
+            }
+
+            .task-item {
+                display: flex;
+                align-items: center;
+                background: #1a3c5c;
+                color: white;
+                padding: 10px 15px;
+                border-radius: 10px;
+                margin-bottom: 10px;
+            }
+
+            .task-checkbox {
+                margin-right: 10px;
+                font-size: 20px;
+            }
+
+            .task-text {
+                flex-grow: 1;
+            }
+
+            .task-time {
+                color: rgba(255, 255, 255, 0.7);
+                font-size: 14px;
+            }
+
+            /* Footer Bar */
+            .footerBar {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 10px 20px;
+                background: linear-gradient(to left, #ff7777b1, #ffef74, #00ff8cd0, #5190f4e8, #ff7eade9, #e44d4ddf);
+                border-top: 5px solid #b0b0b0;
+                box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.2);
+                border-radius: 20px 20px 0 0;
+                position: fixed;
+                bottom: 0;
+                width: 80%;
+                z-index: 1000;
+                left: 10%;
+            }
+
+            .footer-left, .footer-center, .footer-right {
+                flex: 1;
+                display: flex;
+                align-items: center;
+            }
+
+            .footer-left {
+                justify-content: flex-start;
+                padding-left: 20px;
+            }
+
+            .footer-center {
+                justify-content: center;
+            }
+
+            .footer-right {
+                justify-content: flex-end;
+                padding-right: 20px;
+            }
+
+            /* Status Badges */
+            .status {
+                padding: 8px 15px;
+                border-radius: 30px;
+                color: white;
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+                font-size: 1.2em;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            }
+
+            .status.ok {
+                background: linear-gradient(to bottom, #4caf50, #388e3c);
+            }
+
+            .status.late {
+                background: linear-gradient(to bottom, #f44336, #d32f2f);
+            }
+
+            /* Search Input */
+            .footer-center input {
+                width: 60%;
+                padding: 8px 15px;
+                font-size: 1em;
+                border: 2px solid #b0b0b0;
+                border-radius: 20px;
+                outline: none;
+                transition: all 0.3s ease;
+                box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .footer-center input:focus {
+                border-color: #4caf50;
+                box-shadow: 0 0 5px #4caf50;
+            }
+
+            /* Buttons and Icon Buttons */
+            .search-btn, .icon-btn {
+                background: #4caf50;
+                color: white;
+                border: none;
+                border-radius: 50%;
+                font-size: 1.2em;
+                text-shadow: 0 0 3px rgba(0,0,0,0.9);
+                cursor: pointer;
+                transition: transform 0.4s ease;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            }
+
+            .search-btn:hover, .icon-btn:hover {
+                background: #388e3c;
+                transform: translateY(-30px) scale(1.4)
+            }
+
+            .icon-btn {
+                margin-left: 40px;
+                margin-right: 10px;
+            }
+
+            /* Modal Styles */
+            .modal {
+                display: none;
+                position: fixed;
+                z-index: 30;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                overflow: auto;
+                background-color: rgba(0,0,0,0.4);
+                transition: opacity 0.5s ease;
+            }
+
+            .modal-content {
+                background-color: #fff;
+                margin: 10% auto;
+                padding: 20px;
+                border: none;
+                border-radius: 10px;
+                opacity: 0;
+                transition: opacity 0.5s ease, transform 0.3s ease;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+                width: 50%;
+                box-sizing: border-box;
+            }
+
+            .modal.show .modal-content {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .close-btn {
+                color: #aaa;
+                float: right;
+                font-size: 28px;
+                font-weight: bold;
+                cursor: pointer;
+            }
+
+            .close-btn:hover,
+            .close-btn:focus {
+                color: black;
+                text-decoration: none;
+            }
+
+            .modal-content label {
+                display: block;
+                margin-bottom: 10px;
+                color: #333;
+                font-weight: bold;
+            }
+
+            /* Slider Container */
+            .slider-container {
+                margin-bottom: 15px;
+            }
+
+            .slider-container input[type="range"] {
+                width: 100%;
+                margin-top: 5px;
+            }
+
+            .slider-container label {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-weight: bold;
+                color: #333;
+            }
+
+            .modal-content button {
+                margin-top: 15px;
+                padding: 10px 20px;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                width: 100%;
+                transition: background-color 0.3s ease;
+            }
+
+            .modal-content button:hover {
+                background-color: #45a049;
+            }
+
+            /* Progress Modal */
+            .progress-modal {
+                display: none;
+                position: fixed;
+                z-index: 1000;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.4);
+            }
+
+            .progress-modal-content {
+                background: linear-gradient(220deg, lightblue, pink, lightgreen);
+                position: relative;
+                width: 80%;
+                max-width: 600px;
+                margin: 15vh auto;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+                opacity: 0;
+                transition: opacity 0.5s ease, transform 0.3s ease;
+            }
+
+            .progress-modal.show .progress-modal-content {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .progress-modal-content label {
+                display: block;
+                margin-bottom: 10px;
+                color: #333;
+                font-weight: bold;
+            }
+
+            .progress-modal-content textarea,
+            .progress-modal-content input[type="text"] {
+                width: 100%;
+                padding: 10px;
+                box-sizing: border-box;
+                resize: vertical;
+                margin-bottom: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+
+            .progress-modal-content button {
+                margin-top: 15px;
+                padding: 10px 20px;
+                background-color: #008CBA;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                width: 100%;
+                transition: background-color 0.3s, border 0.2s, color 0.2s;
+            }
+
+            .progress-modal-content button:hover {
+                background-color: #005977;
+                border: solid 3px rgba(88, 104, 206, 0.8);
+                color: yellow;
+            }
+
+            /* Progress Notes List */
+            #progress-notes-list {
+                max-height: 200px;
+                overflow-y: auto;
+                margin-bottom: 10px;
+            }
+
+            .progress-note-item {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                background-color: #f2f2f2;
+                padding: 10px;
+                margin-bottom: 5px;
+                border-radius: 5px;
+                transition: background-color 0.3s ease;
+            }
+
+            .progress-note-item:hover {
+                background-color: #e0e0e0;
+            }
+
+            .progress-note-item .note-text {
+                flex-grow: 1;
+                margin-left: 10px;
+                color: #333;
+            }
+
+            .progress-note-item button {
+                margin-left: 10px;
+                background-color: transparent;
+                border: none;
+                color: #e53935;
+                cursor: pointer;
+                font-size: 1em;
+                transition: color 0.2s;
+            }
+
+            .progress-note-item button:hover {
+                color: #b71c1c;
+            }
+
+            /* File Tray */
+            .file-tray {
+                border: 2px dashed #a3a3a3;
+                font-size: 35px;
+                padding: 20px;
+                text-align: center;
+                color: #a3a3a3;
+                margin-bottom: 10px;
+                border-radius: 10px;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+                background-color: #fff;
+            }
+
+            .file-tray.dragover {
+                border-color: #333;
+                background-color: #f9f9f9;
+                color: #333;
+            }
+
+            #file-list {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .file-item {
+                position: relative;
+                width: 100px;
+                text-align: center;
+            }
+
+            .file-item img {
+                width: 60px;
+                height: 60px;
+                object-fit: cover;
+                cursor: pointer;
+                border-radius: 5px;
+                transition: transform 0.3s ease;
+            }
+
+            .file-item img:hover {
+                transform: scale(1.1);
+            }
+
+            .file-item .file-info {
+                display: none;
+                margin-top: 5px;
+                font-size: 0.8em;
+                word-wrap: break-word;
+                color: #333;
+            }
+
+            .file-item.show .file-info {
+                display: block;
+            }
+
+            .file-item .file-name {
+                font-weight: bold;
+                color: #333;
+            }
+
+            .file-item .file-path {
+                color: #555;
+            }
+
+            .file-item .remove-file {
+                position: absolute;
+                top: -5px;
+                right: -5px;
+                background-color: red;
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 20px;
+                height: 20px;
+                cursor: pointer;
+                font-size: 14px;
+                line-height: 18px;
+                padding: 0;
+                transition: background-color 0.3s ease, transform 0.3s ease;
+            }
+
+            .file-item .remove-file:hover {
+                background-color: #b71c1c;
+                transform: rotate(90deg);
+            }
+
+            /* Settings Modal */
+            .settings-modal {
+                display: none;
+                justify-content: center;
+                justify-items: center;
+                position: fixed;
+                z-index: 35;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                overflow: auto;
+                background-color: rgba(0,0,0,0.4);
+                transition: opacity 1.5s ease;
+            }
+
+            .settings-modal-content {
+                background-color: #a13b3b;
+                margin: 30% auto;
+                padding: 20px;
+                border: none;
+                border-radius: 10px;
+                opacity: 0;
+                transition: opacity 0.5s ease, transform 0.3s ease;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+                width: fit-content;
+                height:fit-content;
+            }
+
+            .settings-modal.show .settings-modal-content {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .settings-close-btn {
+                color: #aaa;
+                float: right;
+                font-size: 28px;
+                font-weight: bold;
+                cursor: pointer;
+            }
+
+            .settings-close-btn:hover,
+            .settings-close-btn:focus {
+                color: black;
+                text-decoration: none;
+            }
+
+            .theme-btn {
+                font-size: 2.1em;
+                padding: 2px 8px;
+                width: auto;
+                height: auto;
+                border-radius: 10%;
+                text-shadow: 0 0  10px rgba(0, 0, 0, 0.635);
+                border: 1px solid rgba(255, 255, 255, 0.847);
+                transition: all 0.3s ease;
+            }
+
+            .theme-btn:hover {
+                opacity: 1;
+                transform: scale(2.5);
+                border: 2.2px solid rgba(255, 255, 255, 1);
+                box-shadow: 0 0 15px pink;
+            }
+
+            .theme-btn:active {
+                transform: scale(.9);
+            }
+
+        /* General styles for both buttons */
+button#fireup, button#firedown {
+    display: inline-block;
+    padding: 2px 10px;
+    margin: 0px 0px;
+    margin-left: 20px;
+    font-size: 2rem;
+    font-weight: bold;
+    box-shadow:inset 0 0 5px rgba(239, 233, 233, 0.878);
+    color: white;
+    text-shadow: 0 0 8px rgba(0,0,0 1);
+    background-color: #007bff; /* Primary button color */
+    border: 3px yellow solid;
+    border-radius: 40px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Hover effects */
+button#fireup:hover, button#firedown:hover {
+    background-color: #0056b3; /* Darker blue */
+    box-shadow:inset 0 0 5px rgba(255, 232, 24, 0.878);
+
+}
+
+/* Active effects */
+button#fireup:active, button#firedown:active {
+    transform: scale(0.8); /* Slight shrink */
+    box-shadow:inset 0 0 5px rgba(1, 1, 0, 0.878);
+
+}
+
+/* Styles for specific buttons */
+button#fireup {
+    background-color: #0821ff; /* Green for upload */
+}
+
+button#fireup:hover {
+    background-color: #d9ff00; /* Darker green */
+}
+
+button#firedown {
+    background-color: #f57af1; /* Red for download */
+    text-shadow: -1px -1px 3px black;
+}
+
+button#firedown:hover {
+    background-color: #ffff01; /* Darker red */
+}
+
+button#firedown:active {
+    background-color: #ffff00; /* Darker red */
+}
+
+/* ===== Task Manager Modal Table Styles ===== */
+#task-manager-modal .modal-content {
+    width: 60%;
+}
+#tasks-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+#tasks-table th, #tasks-table td {
+    text-align: left;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+#tasks-table th {
+    background-color: #f2f2f2;
+}
+#tasks-table td[contenteditable="true"]:focus {
+    background-color: #e8f0fe;
+    outline: none;
+}
+.action-btn {
+    cursor: pointer;
+    padding: 5px 10px;
+    margin-right: 5px;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+.delete-btn {
+    background-color: #f44336;
+    color: white;
+}
+.delete-btn:hover {
+    background-color: #da190b;
+}
+
+
+
+        .selector {
+            top: 105%;
+            background: rgba(22, 31, 45, 0.75);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 0 3px rgba(255, 255, 255, 0.726);
+            display: flex;
+            border: 4px inset #0aff3b;
+            align-items: center;
+            gap: 30px;
+            overflow: hidden;
+            max-width: 300px;
+            z-index: 1000; /* Add a high z-index to ensure it’s on top */
+
+        }
+        .thumbnail-container {
+    display: flex;
+    overflow-x: auto;
+    width: 90%;
+    height: fit-content;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+}
+.thumbnail-container::-webkit-scrollbar {
+    display: none;             /* Chrome, Safari and Opera */
+}        .selector img {
+            width: 200px;
+            height: 120px;
+            gap: 60px;
+            border: 4px solid transparent;
+            margin: 10px;
+            border-radius: 18px;
+            cursor: pointer;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+        .selector img:hover {
+            transform: scale(1.05);
+            border-color: #ffffff8e;
+        }
+        .selector img.selected {
+            border-color: #00FF00;
+        }
+        .change-arrow {
+            font-size: 0.4em;
+            cursor: pointer;
+            color: #00FF00;
+        }
+        @keyframes glow {
+            0% { text-shadow: 0 0 5px #00FF00; }
+            100% { text-shadow: 0 0 20px #00FF00; }
+        }
+        .background-selector {
+            visibility: visible;
+        }
+
+
+
+</style>
+<link id="theme-stylesheet" rel="stylesheet" href="assets/styles/minimal.css">
+
+    </head>
+    <body>
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="top-left">
+                <span id="current-time">00:00</span> | <span id="current-date">January 1, 2024</span>
+            </div>
+            <div class="top-center">
+                <em id="words-of-day">Peace, Preparation, Prospective</em>
+            </div>
+            <div class="top-right">
+                ThoughtStream™
+            </div>
+              <!-- TAB CONTAINER START -->
+              <div class="tab-container">
+
+                <div class="tab-list" id="tab-list">
+                    <!-- Tabs will appear here -->
+                </div>
+                <div class="tab-new-btn" id="tab-new-btn">✏️</div>
+              </div>
+            <!-- TAB CONTAINER END -->
+        </div>
+                    
+        
+        <!-- Main Area -->
+        <div class="main-area" id="main-area">
+            <!-- Tasks will be dynamically added here -->
+        </div>
+        
+        <!-- Footer Bar -->
+        <span class="tab-view-btn" id="tab-view-btn">
+            <img src="https://i.imgur.com/PGpxLIl.png" alt="ThoughtIcon">
+        </span>
+
+        <div class="footerBar">
+            <div class="footer-left">
+
+                  <span class="status ok" id="ok-status">Eight OK!</span>
+                <span class="status late" id="late-status">One Late!</span>
+                <button id="fireup">🔺</button>
+                <button id="firedown">🔻</button>
+            </div>
+            <div class="footer-center">
+                <input type="text" id="task-input" placeholder="Click to enter new item">
+            </div>
+            <div class="footer-right">
+                <button class="icon-btn" id="eye-btn">👁️‍🗨️</button>
+                <button class="icon-btn" id="gear-btn">⚙️</button>
+                <button class="icon-btn" id="appointment-btn">⏰</button>
+                <button class="theme-btn" id="theme-btn">🎨</button>                 
+                <!-- Theme Switcher Button -->
+            </div>
+        </div>
+        <!-- Rating Modal -->
+        <div id="rating-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <h2>Rate Your Task</h2>
+                <div class="slider-container">
+                    <label for="importance">How Important (1-5): <span id="importance-value">3</span>
+                    </label>
+                    <input type="range" id="importance" name="importance" min="1" max="5" value="3">
+                </div>
+                <div class="slider-container">
+                    <label for="complexity">How Complex (1-5): <span id="complexity-value">3</span>
+                    </label>
+                    <input type="range" id="complexity" name="complexity" min="1" max="5" value="3">
+                </div>
+                <div class="slider-container">
+                    <label for="enjoyment">How Enjoyable (1-5): <span id="enjoyment-value">3</span>
+                    </label>
+                    <input type="range" id="enjoyment" name="enjoyment" min="1" max="5" value="3">
+                </div>
+                <label>Due Date:
+                    <input type="date" id="due-date">
+                </label>
+
+                <!-- Stream Selector -->
+                <label for="stream-select">Stream/Tab:</label>
+                <select id="stream-select" name="stream-select">
+                </select>
+
+                <button id="submit-rating">Add Task</button>
+            </div>
+        </div>
+        <!-- Progress Notes Modal -->
+        <div id="progress-modal" class="progress-modal">
+            <div class="progress-modal-content">
+                <span class="close-btn">&times;</span>
+                <h2 id="modal-task-header">Task Name</h2> 
+                <h3 id="modal-task-dateheader">(Added mm/dd/yyyy, Due mm/dd/yyyy)</h3>
+                <label for="task-description">Task Description:</label>
+                <textarea id="task-description" rows="3" placeholder="Edit task description here"></textarea>
+                <h3>Progress Notes:</h3>
+                <div id="progress-notes-list">
+                    <!-- Existing progress notes will be listed here -->
+                </div>
+                <input type="text" id="new-progress-note" placeholder="Enter a new progress note">
+                <button id="add-progress-note">Add Note</button>
+                <h3>File Tray:</h3>
+                <div id="file-tray" class="file-tray">
+                    <p>Drag and drop files here</p>
+                </div>
+                <div id="file-list">
+                    <!-- Files will be displayed here -->
+                </div>
+            </div>
+        </div>
+        <!-- Settings Modal -->
+        <div id="settings-modal" class="settings-modal">
+            <div class="settings-modal-content">
+                <span class="settings-close-btn">&times;</span>
+                <h1>Settings</h1>
+                <div class="slider-container">
+                    <label for="speed-slider">Animation Speed: <span id="speed-value">1</span>
+                    </label>
+                    <input type="range" id="speed-slider" name="speed-slider" min="0.5" max="2" step="0.1" value="1">
+                </div>
+
+                <div class="selector" id="background-selector">
+                    <span class="change-arrow" onclick="scrollLeft()">&#8678;</span>
+                    <div class="thumbnail-container" id="thumbnail-container">
+                      <!-- Your existing image list -->
+                      <img src="https://static.wixstatic.com/media/58c99c_82bc6dcf20134df4ac2cfb84c8f10480~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_704c0cc6bd534a1e96f60770e5c7ef3b~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_819a80d0edac4983b8c308b51acfa863~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_1611efb2959d4fbd8424cd8cc866341a~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_54563d1482614386b8a5f627319cca24~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_231826c2d3e0476f8f98af51b98c1f72~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_3397053c3aa54eaaa4807edfb43b615c~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_32089165da6e4c508fb100ff17b3dd08~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_612494990fb94a80aec6523a7c4443ef~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_77917697885642a8990363484c399d1f~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_1355215818934749a9709ed27df9e6ce~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_a3b3fd9f45994ae7a1c314c12b0bfe22~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_a65505614f174901980d3f2d87967d9d~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_aa438eafa8644324a5b8f7facfa1e5de~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_ad82c4bc02e74222b16f82888396362~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_a45685a014437d814c5ae795cbbd7e~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_b5ff2cc5b3874b72a46f85fa5f0d437c~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_bc6d7d419b13460d8e94c001e4366a91~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_c77a6296a3ce4026a5bd752ae00ad470~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_c308e6adacdf4fdf8f4d49a2fecf4f1~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_cf45aac0a634892819a970b5c6aafcb~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_d19a72a025b446894381965ae2cd4bd~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_d2824c7c8c44649219e119dda92564~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_dd550ce406c8449d97adfde857590a82~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_e0d01ee82a3c41a7ab73abd9a175372d~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_e9bdce93588d42a2af1efOba6a8ee944~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_e695db92f5c946a98c1444d8e6249d29~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_ea0d98d2134444349b6c9aa89db2ddde~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_ea480b2696964ab6801432afdab1862a~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_f1fe6d0797bc4ba99cf8566940d4399~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_f011b6dcd51640009cdab0021b8db38e~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_f69ff41729484a298ed8e4ce3dce8448~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_f6103ea72d5e4b7e8be178328508220c~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_0e0e6c8ff9eb4ab09acb0b37e946573b~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_2ad4cbc36f264676a4c32d48d4774645~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_2ce5dfdcf3ee42629be413ecc18fec3c~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_2d52d1abbbfa486d926c2277dfd1c1ac~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_2d42841c84c0401bae996fc2bcc3631a~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_3e44712ef9e743a7bc13d21cef94c838~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_4dc74b02e0ae432ab8c0f56a8ee0282c~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_5d81aedfc5244a0582233ac09c0f8be5~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_5dcbb7ef5fd24762b2a1139de87d90d5~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_5ea0980e6cde4c40a4e8eb999999b66e~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_6c34d773762f42f98515138c5212b8ea~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_6ce4cd076f8b4930bf72c0141e2fa6e9~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_7ae1cf89bf2a4675a796d1303fc2e2eb~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_8af2d36e8771486eb74804a451f3ea7b~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_8b0709d6a69454485141d11e0655c8c~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_8dd67ef9e4ce4079ad2c1bf3421c73a1~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_9d8b02214f91450da4cde695a8c639bf~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_9de80f25380a4d45bd789534a1938979~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_17fd4d118a5f4aa99d4602138c4fd814~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_19a4932d4b6b478d973325a4e2e15b7d~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_25dfb8d2011140feaf880692d6f4d984~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_28cc167e074f4de1aaba0f7abf8984c8~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_30cee535df7446b28f6190024c73c5e5~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_36ca7bcd077246efa5b2d75eeef3e402~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_037b608e50a448789bc1d24cd862db7f~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_37d1c3eff34a499aba2901cc9f95132b~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_47cb5a212d88451289e669160791a4ad~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_48ceb427a813441f9326cf33125cc19d~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_54a134f7f0a946b88f1927843fd27b71~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_56f0987ccb0944e5a5b20c1b5f0fed53~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_66be6ec0259447a69df35e642204212e~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_068fc8f526a64147aa76e0bb8f4da12e~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_71d8e91a0a864ef885dbeba029d8357d~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_71fddf5236154b579c75b6e6c67acfd2~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_73c8fc892a0242f9912e1981c0064f45~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                      <img src="https://static.wixstatic.com/media/58c99c_75f2fe26ddc14ef2a8134e8abb7ff1ab~mv2.png" alt="Background 1" onclick="changeBackground(this.src)">
+                    </div>
+                    <span class="change-arrow" onclick="scrollRight()">&#8680;</span>
+                </div>
+                <span class="change-arrow" onclick="scrollRight()">&#8680;</span>
+            </div>
+            
+            
+
+            </div>
+        </div>
+
+        <!-- Appointment Modal -->
+        <div id="appointment-modal" class="modal">
+            <div class="modal-content appointment-content">
+                <span class="close-btn">&times;</span>
+                <div class="appointment-header">
+                    <div class="appointment-title">Appointment for Brock's Mec</div>
+                    <div class="appointment-icons">
+                        <span class="icon hourglass">⌛</span>
+                        <span class="icon calendar">📅</span>
+                        <span class="icon pencil">✏️</span>
+                    </div>
+                </div>
+                <div class="timer-section">
+                    <div class="time-remaining">24<span>min REMAIN</span></div>
+                    <button class="pause-btn">⏸️</button>
+                    <div class="timer-status">ending at 11:03 / Started at 9<br>No notes added</div>
+                </div>
+                <div class="task-list">
+                    <div class="task-item">
+                        <span class="task-checkbox">○</span>
+                        <span class="task-text">Load car for drivin..</span>
+                        <span class="task-time">in 30min</span>
+                    </div>
+                    <div class="task-item">
+                        <span class="task-checkbox">○</span>
+                        <span class="task-text">Call Mom</span>
+                        <span class="task-time">in 2.5hr</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Appointment Modal -->
+        <div id="appointment-modal" class="modal">
+            <div class="modal-content appointment-content">
+                <span class="close-btn">&times;</span>
+                <div class="appointment-header">
+                    <input type="text" class="appointment-title-input" placeholder="Enter appointment title">
+                    <div class="appointment-icons">
+                        <span class="icon hourglass" title="Kitchen Timer Mode">⌛</span>
+                        <span class="icon calendar" title="Due Date Mode">📅</span>
+                        <span class="icon pencil" title="Import Tasks">✏️</span>
+                    </div>
+                </div>
+                
+                <!-- Timer Mode Selection -->
+                <div class="timer-mode-section">
+                    <div class="timer-mode kitchen-timer active" data-mode="kitchen">
+                        <div class="timer-input-group">
+                            <input type="number" class="hours-input" min="0" max="23" placeholder="HH">
+                            <span>:</span>
+                            <input type="number" class="minutes-input" min="0" max="59" placeholder="MM">
+                            <span>:</span>
+                            <input type="number" class="seconds-input" min="0" max="59" placeholder="SS">
+                        </div>
+                        <button class="start-timer-btn">Start Timer</button>
+                    </div>
+                    
+                    <div class="timer-mode due-date" data-mode="due">
+                        <input type="datetime-local" class="due-date-input">
+                        <button class="set-due-date-btn">Set Due Date</button>
+                    </div>
+                </div>
+
+                <!-- Timer Display -->
+                <div class="timer-display">
+                    <div class="time-remaining"></div>
+                    <div class="timer-controls">
+                        <button class="pause-btn">⏸️</button>
+                        <button class="stop-btn">⏹️</button>
+                        <button class="reset-btn">🔄</button>
+                    </div>
+                    <div class="timer-status"></div>
+                </div>
+
+                <!-- Task Management -->
+                <div class="task-section">
+                    <div class="task-controls">
+                        <input type="text" class="task-input" placeholder="Enter task description">
+                        <button class="add-task-btn">Add Task</button>
+                        <button class="import-tasks-btn">Import Tasks</button>
+                    </div>
+                    <div class="task-list">
+                        <!-- Tasks will be added dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Task Manager Modal -->
+        <div id="task-manager-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <h2>Task Manager</h2>
+                <!-- 
+                     ADDED: New column for Stream in the manager (with a dropdown).
+                     Developer Note: We do not remove anything; we only extend columns. 
+                -->
+                <table id="tasks-table">
+                    <thead>
+                        <tr>
+                            <th>Task Name</th>
+                            <th>Priority</th>
+                            <!-- ADDED FEATURE: Stream Column in Task Manager -->
+                            <th>Stream</th>
+                            <th>Due Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamically populated -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDS9mU6q1ihwxJQUukIlg5NYwGH2VRGKSs",
+      authDomain: "thoughtstreamr.firebaseapp.com",
+      databaseURL: "https://thoughtstreamr-default-rtdb.firebaseio.com",
+      projectId: "thoughtstreamr",
+      storageBucket: "thoughtstreamr.firebasestorage.app",
+      messagingSenderId: "640016386631",
+      appId: "1:640016386631:web:9a059f29ab56c82cfdbf62"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    async function uploadToDatabase() {
+    const localStorageData = { ...localStorage };
+
+    // Sanitize and prepare data for upload
+    const sanitizedData = {};
+    for (const [key, value] of Object.entries(localStorageData)) {
+        const sanitizedKey = key.replace(/\./g, ',')
+                                .replace(/#/g, ':')
+                                .replace(/\$/g, ';')
+                                .replace(/\//g, '-')
+                                .replace(/\[/g, '(')
+                                .replace(/\]/g, ')');
+        sanitizedData[sanitizedKey] = value;
+    }
+
+    const dbRef = ref(db, 'storage/localData');
+    await set(dbRef, {
+        data: sanitizedData
+    });
+
+    document.body.style.opacity = 0;
+    setTimeout(() => {
+        document.body.style.opacity = 1;
+    }, 1000);
+}
+
+async function downloadFromDatabase() {
+    const dbRef = ref(db);
+    const snapshot = await get(child(dbRef, 'storage/localData'));
+    if (snapshot.exists()) {
+        const databaseData = snapshot.val().data;
+
+        // Desanitize and save data back to localStorage
+        for (const [key, value] of Object.entries(databaseData)) {
+            const desanitizedKey = key.replace(/,/g, '.')
+                                     .replace(/:/g, '#')
+                                     .replace(/;/g, '$')
+                                     .replace(/-/g, '/')
+                                     .replace(/\(/g, '[')
+                                     .replace(/\)/g, ']');
+            localStorage.setItem(desanitizedKey, value);
+        }
+    }
+    
+    document.body.style.opacity = 0;
+    setTimeout(() => {
+        document.body.style.opacity = 1;
+    }, 1000);
+}
+
+    // Add event listeners to buttons
+    document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("fireup").addEventListener("click", uploadToDatabase);
+        document.getElementById("firedown").addEventListener("click", downloadFromDatabase);
+    });
+
+            // Define theme stylesheets
+            const themes = [
+            'assets/styles/minimal.css',
+            'assets/styles/default.css',
+                'assets/styles/vibrant.css',
+                'assets/styles/eco.css',
+                'assets/styles/soft.css',
+                'assets/styles/retro.css',
+                'assets/styles/tech.css',
+                'assets/styles/dark.css',
+            ];
+            
+            const themeEmojis = ['🤍','💠', '🌈', '🌿', '🦋', '👾', '🤖',  '🌒'];
+
+            let tasks = [];
+            let activeTweens = [];
+            let animationSpeed = 1; // Default speed
+
+            /* STREAMS */
+            let streams = [];
+            let activeStream = 'All';
+    // Function to update all theme-stylesheet links
+    function updateThemeStylesheet(index) {
+                const themeStylesheet = document.getElementById('theme-stylesheet');
+                if (themeStylesheet) {
+                    themeStylesheet.href = themes[index];
+                }
+            }
+            document.addEventListener('DOMContentLoaded', () => {
+                // Theme init
+                const savedThemeIndex = parseInt(localStorage.getItem('currentThemeIndex'));
+                if(!isNaN(savedThemeIndex) && savedThemeIndex >= 0 && savedThemeIndex < themes.length){
+                    currentThemeIndex = savedThemeIndex;
+                    updateThemeStylesheet(currentThemeIndex);
+                } else {
+                    currentThemeIndex = 0;
+                    updateThemeStylesheet(currentThemeIndex);
+                    localStorage.setItem('currentThemeIndex', currentThemeIndex);
+                }
+                
+                const themeBtn = document.getElementById('theme-btn');
+                themeBtn.textContent = themeEmojis[currentThemeIndex];
+                
+                const savedSpeed = parseFloat(localStorage.getItem('animationSpeed'));
+                if (!isNaN(savedSpeed)) {
+                    animationSpeed = savedSpeed;
+                } else {
+                    animationSpeed = 1;
+                    localStorage.setItem('animationSpeed', animationSpeed);
+                }
+
+                // Initialize Date and Time Display
+                initializeDateTimeDisplay();
+                loadStreams();
+                renderStreams();
+                populateStreamSelect();
+            });
+
+            function loadStreams() {
+                try {
+                    const storedStreams = localStorage.getItem('thoughtStreamTabs');
+                  
+                        streams = ["All","School","Home","Health","Brock","Composing","Coding"];
+                        saveStreams();
+                    
+                } catch (e) {
+                    console.error('Error loading streams:', e);
+                    streams = ["All","School","Home","Health","Brock","Composing","Coding"];
+                    saveStreams();
+                }
+            }
+
+            function saveStreams() {
+                try {
+                    localStorage.setItem('thoughtStreamTabs', JSON.stringify(streams));
+                } catch (e) {
+                    console.error('Error saving streams:', e);
+                }
+            }
+
+            function renderStreams() {
+                const tabList = document.getElementById('tab-list');
+                tabList.innerHTML = '';
+                streams.forEach((stream) => {
+                    const tab = document.createElement('div');
+                    tab.className = 'stream-tab';
+                    tab.textContent = stream;
+                    if (stream === activeStream) {
+                        tab.classList.add('active');
+                    }
+                    tab.addEventListener('click', () => {
+                        activeStream = stream;
+                        renderStreams();
+                        updateTaskVisibility();
+                    });
+                    tabList.appendChild(tab);
+                });
+            }
+
+            // The left "view" button might do something like show/hide the tab container. 
+            // -- ADDED CODE START --
+            // Change: On click, we toggle the visibility of the tab-list and the pencil (tab-new) instead of switching to 'All'.
+            // Developer Note: We keep the original code but comment out the "activeStream" logic for new feature.
+            /*
+                original was:
+                    activeStream = 'All';
+                    renderStreams();
+                    updateTaskVisibility();
+            */
+
+
+
+
+            document.getElementById('tab-view-btn').addEventListener('click', () => {
+    const tabListEl = document.getElementById('tab-list');
+    const footer = document.getElementsByClassName('footerBar')[0]; // Access the first element
+    const tabNewBtn = document.getElementById('tab-new-btn');
+    const topBar = document.getElementsByClassName('top-bar')[0]; // Access the first element
+
+    tabListEl.classList.toggle('hidden');
+    tabNewBtn.classList.toggle('hidden');
+
+    // Toggle footer opacity between 0 and 1
+    if (footer.style.opacity === '0') {
+        footer.style.opacity = '1';
+    } else {
+        footer.style.opacity = '0'; // Missing line to set opacity to 0
+    }
+
+
+    // Toggle footer opacity between 0 and 1
+    if (topBar.style.opacity === '0') {
+        topBar.style.opacity = '1';
+    } else {
+        topBar.style.opacity = '0'; // Missing line to set opacity to 0
+    }
+
+
+});
+    
+
+
+
+            // The pencil button to add new tabs
+            document.getElementById('tab-new-btn').addEventListener('click', ()=> {
+                const newTabName = prompt("Enter name for new tab:");
+                if (newTabName && !streams.includes(newTabName)) {
+                    streams.push(newTabName);
+                    saveStreams();
+                    renderStreams();
+                    populateStreamSelect();
+                }
+            });
+
+            function populateStreamSelect() {
+                const streamSelect = document.getElementById('stream-select');
+                if (!streamSelect) return;
+                streamSelect.innerHTML = '';
+                streams.forEach(s => {
+                    const option = document.createElement('option');
+                    option.value = s;
+                    option.textContent = s;
+                    streamSelect.appendChild(option);
+                });
+            }
+
+            function updateTaskVisibility() {
+                // For each .task, check its dataset.stream. If it doesn't match activeStream (and activeStream != "All"), fade out, pointer none.
+                const taskElements = document.querySelectorAll('.task');
+                taskElements.forEach(taskEl => {
+                    const tStream = taskEl.getAttribute('data-stream') || 'All';
+                    if (activeStream === 'All' || tStream === activeStream) {
+                        taskEl.style.opacity = '1';
+                        taskEl.style.pointerEvents = 'auto';
+                    } else {
+                        taskEl.style.opacity = '0';
+                        taskEl.style.pointerEvents = 'none';
+                    }
+                });
+            }
+
+            function loadTasks() {
+                try {
+                    const storedTasks = localStorage.getItem('thoughtStreamTasks');
+                    if (storedTasks) {
+                        let parsedTasks;
+                        try {
+                            parsedTasks = JSON.parse(storedTasks);
+                        } catch (e) {
+                            console.error('Failed to parse stored tasks:', e);
+                            return initializeDefaultTasks();
+                        }
+            
+                        tasks = parsedTasks.filter(task => {
+                            return (
+                                task &&
+                                typeof task === 'object' &&
+                                typeof task.id === 'string' &&
+                                typeof task.name === 'string' &&
+                                task.name.length > 0 &&
+                                ['overdue', 'urgentHigh', 'normalHigh', 'medium', 'lightMedium', 'low', 'lowLeisure'].includes(task.priority)
+                            );
+                        });
+            
+                        tasks = tasks.map(task => ({
+                            id: task.id || generateUniqueId(),
+                            name: task.name || 'Untitled Task',
+                            description: task.description || '',
+                            priority: task.priority || 'medium',
+                            addedDate: task.addedDate || new Date().toISOString(),
+                            dueDate: task.dueDate || '',
+                            notes: Array.isArray(task.notes) ? task.notes : [],
+                            filePaths: Array.isArray(task.filePaths) ? task.filePaths : [],
+                            complexity: task.complexity || 3,
+                            enjoyment: task.enjoyment || 3,
+                            importance: task.importance || 3,
+                            stream: task.stream || 'All'
+                        }));
+            
+                        saveTasks();
+                    } else {
+                        initializeDefaultTasks();
+                    }
+                } catch (e) {
+                    console.error('Error loading tasks:', e);
+                    initializeDefaultTasks();
+                }
+            }
+            
+            function initializeDefaultTasks() {
+                tasks = [
+                    { 
+                        id: generateUniqueId(), 
+                        name: 'Overdue', 
+                        description: 'Complete and submit tax forms by the deadline.', 
+                        priority: determinePriorityClass('2025-01-09'),
+                        addedDate: new Date().toISOString(), 
+                        dueDate: '2025-01-09',
+                        notes: [], 
+                        filePaths: [],
+                        complexity: 5, 
+                        enjoyment: 1,  
+                        importance: 5,
+                        stream: 'All'
+                    },
+                    { 
+                        id: generateUniqueId(), 
+                        name: 'Urgent High', 
+                        description: 'Prepare slides for Monday’s presentation.', 
+                        priority: determinePriorityClass('2025-01-13'),
+                        addedDate: new Date().toISOString(), 
+                        dueDate: '2025-01-13',
+                        notes: [], 
+                        filePaths: [],
+                        complexity: 1,
+                        enjoyment: 1,
+                        importance: 1,
+                        stream: 'School'
+                    },
+                    { 
+                        id: generateUniqueId(), 
+                        name: 'Normal High Groceries', 
+                        description: 'Purchase weekly groceries.', 
+                        priority: determinePriorityClass('2025-01-17'),
+                        addedDate: new Date().toISOString(), 
+                        dueDate: '2025-01-17',
+                        notes: [], 
+                        filePaths: [],
+                        complexity: 1,
+                        enjoyment: 1,
+                        importance: 1,
+                        stream: 'Home'
+                    },
+                    { 
+                        id: generateUniqueId(), 
+                        name: 'Medium', 
+                        description: 'Read “The Great Gatsby” by F. Scott Fitzgerald.', 
+                        priority: determinePriorityClass('2025-01-22'),
+                        addedDate: new Date().toISOString(), 
+                        dueDate: '2025-01-22',
+                        notes: [], 
+                        filePaths: [],
+                        complexity: 1,
+                        enjoyment: 1,
+                        importance: 1,
+                        stream: 'All'
+                    },
+                    { 
+                        id: generateUniqueId(), 
+                        name: 'Light Medium Closet', 
+                        description: 'Sort and organize the closet.', 
+                        priority: determinePriorityClass('2025-01-28'),
+                        addedDate: new Date().toISOString(), 
+                        dueDate: '2025-01-28',
+                        notes: [], 
+                        filePaths: [],
+                        complexity: 1,
+                        enjoyment: 1,
+                        importance: 1,
+                        stream: 'Home'
+                    },
+                    { 
+                        id: generateUniqueId(), 
+                        name: 'Low', 
+                        description: 'Plan the itinerary for summer vacation.', 
+                        priority: determinePriorityClass('2025-02-09'),
+                        addedDate: new Date().toISOString(), 
+                        dueDate: '2025-02-09',
+                        notes: [], 
+                        filePaths: [],
+                        complexity: 1,
+                        enjoyment: 1,
+                        importance: 1,
+                        stream: 'All'
+                    },
+                    { 
+                        id: generateUniqueId(), 
+                        name: 'Low Leisure', 
+                        description: 'Spend 10 minutes meditating.', 
+                        priority: determinePriorityClass(''),
+                        addedDate: new Date().toISOString(), 
+                        dueDate: '', 
+                        notes: [], 
+                        filePaths: [],
+                        complexity: 1,
+                        enjoyment: 1,
+                        importance: 1,
+                        stream: 'Health'
+                    }
+                ];
+                saveTasks();
+            }
+            
+            function saveTasks() {
+                try {
+                    const tasksString = JSON.stringify(tasks);
+                    try {
+                        localStorage.setItem('thoughtStreamTasks', tasksString);
+                    } catch (e) {
+                        if (e.name === 'QuotaExceededError') {
+                            body.style.opacity = 0;
+                            setTimeout(() => {
+                                body.style.opacity = 1;
+                            }, 100);
+                            return false;
+                        }
+                        throw e;
+                    }
+                    return true;
+                } catch (e) {
+                    console.error('Error saving tasks:', e);
+                    body.style.opacity = 0;
+                    setTimeout(() => {
+                        body.style.opacity = 1;
+                    }, 100);                    
+                    return false;
+                }
+            }
+            
+            function generateUniqueId() {
+                return 'task-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+            }
+            
+            loadTasks();
+            tasks.forEach(taskData => addTask(taskData));
+            
+            function determinePriorityClass(dueDate) {
+                if (!dueDate) {
+                    return 'medium';
+                }
+            
+                const today = new Date();
+                const due = new Date(dueDate);
+                const diffTime = due - today;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+                if (diffDays <= 0) {
+                    return 'overdue';
+                } else if (diffDays >= 1 && diffDays <= 4) {
+                    return 'urgentHigh';
+                } else if (diffDays >= 5 && diffDays <= 9) {
+                    return 'normalHigh';
+                } else if (diffDays >= 10 && diffDays <= 14) {
+                    return 'medium';
+                } else if (diffDays >= 15 && diffDays <= 20) { 
+                    return 'lightMedium';
+                } else if (diffDays >= 21) {
+                    return 'low';
+                } else {
+                    return 'lowLeisure';
+                }
+            }
+            
+            function determineFontFamily(complexity, enjoyment, importance) {
+                if (enjoyment >= 3 && complexity < 3) {
+                    return '"iloveglitter", cursive';
+                }
+                return '';
+            }
+            
+            function addTask(taskData) {
+                const mainArea = document.getElementById('main-area');
+            
+                const task = document.createElement('div');
+                task.classList.add('task');
+            
+                const priorityClass = determinePriorityClass(taskData.dueDate);
+                task.classList.add(priorityClass);
+            
+                const fontFamily = determineFontFamily(taskData.complexity, taskData.enjoyment, taskData.importance);
+                task.style.fontFamily = fontFamily;
+            
+                task.textContent = taskData.name;
+                task.dataset.id = taskData.id;
+                task.dataset.stream = taskData.stream || 'All';
+            
+                task.style.visibility = 'hidden';
+                mainArea.appendChild(task);
+            
+                requestAnimationFrame(() => {
+                    const taskWidth = task.offsetWidth;
+                    const endX = window.innerWidth + taskWidth;
+                    const mainArea = document.getElementById('main-area');
+                    const mainAreaHeight = mainArea.clientHeight;
+                    const taskHeight = task.offsetHeight;
+                    const maxY = mainAreaHeight - taskHeight;
+                    const startY = Math.random() * maxY;
+            
+                    task.style.top = `${startY}px`;
+                    task.style.left = `0px`;
+                    task.style.transform = `translateX(-${taskWidth}px)`;
+                    task.style.visibility = 'visible';
+            
+                    initializeTaskAnimation(task, taskData, -taskWidth, endX, startY);
+                    updateTaskStatus();
+                    attachHoverListeners(task, taskData);
+                    updateTaskVisibility();
+                });
+            }
+            
+            function initializeTaskAnimation(task, taskData, startX, endX, startY) {
+                cleanupTaskAnimation(task);
+            
+                task.dataset.animating = 'true';
+                const baseDuration = taskData.priority === 'overdue' ? window.innerWidth * 15 * 0.6 :
+                                    taskData.priority === 'medium' ? window.innerWidth * 15 * 0.8 :
+                                    window.innerWidth * 15;
+                const duration = baseDuration / animationSpeed;
+            
+                const tween = new TWEEN.Tween({ x: startX })
+                    .to({ x: endX }, duration)
+                    .easing(TWEEN.Easing.Linear.None)
+                    .onUpdate(({ x }) => {
+                        if (task.dataset.animating === 'true') {
+                            task.style.transform = `translateX(${x}px)`;
+                        }
+                    })
+                    .onComplete(() => {
+                        if (task.dataset.animating === 'true') {
+                            const taskWidth = task.offsetWidth;
+                            const taskExists = tasks.find(t => t.id === taskData.id);
+                            if (taskExists) {
+                                setTimeout(() => {
+                                    if (document.getElementById('main-area')) {
+                                        task.style.transform = `translateX(-${taskWidth}px)`;
+                                        task.style.transition = 'none';
+                                        document.getElementById('main-area').appendChild(task);
+                                        requestAnimationFrame(() => {
+                                            task.style.transition = '';
+                                            initializeTaskAnimation(task, taskData, -taskWidth, endX, startY);
+                                        });
+                                    }
+                                }, Math.random() * 2000 + 1000);
+                            }
+                        }
+                    })
+                    .start();
+            
+                tween._object = task;
+                activeTweens.push(tween);
+            
+                const mouseEnterHandler = () => {
+                    if (task.dataset.animating === 'true') {
+                        tween.pause();
+                    }
+                };
+            
+                const mouseLeaveHandler = () => {
+                    if (task.dataset.animating === 'true') {
+                        tween.resume();
+                    }
+                };
+            
+                task.addEventListener('mouseenter', mouseEnterHandler);
+                task.addEventListener('mouseleave', mouseLeaveHandler);
+            
+                task._animationCleanup = () => {
+                    task.removeEventListener('mouseenter', mouseEnterHandler);
+                    task.removeEventListener('mouseleave', mouseLeaveHandler);
+                };
+            }
+            
+            function cleanupTaskAnimation(task) {
+                const existingTween = activeTweens.find(t => t._object === task);
+                if (existingTween) {
+                    existingTween.stop();
+                    activeTweens = activeTweens.filter(t => t !== existingTween);
+                }
+                if (task._animationCleanup) {
+                    task._animationCleanup();
+                    delete task._animationCleanup;
+                }
+                task.dataset.animating = 'false';
+            }
+            
+            function animateTweens(time) {
+                requestAnimationFrame(animateTweens);
+                TWEEN.update(time);
+            }
+            requestAnimationFrame(animateTweens);
+            
+            document.getElementById('task-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const newTaskText = this.value.trim();
+                    if (newTaskText) {
+                        showRatingPopup(newTaskText);
+                        this.value = '';
+                    }
+                }
+            });
+            
+            document.getElementById('gear-btn').addEventListener('click', () => {
+                openSettingsModal();
+            });
+
+            document.getElementById('appointment-btn').addEventListener('click', () => {
+                const appointmentModal = document.getElementById('appointment-modal');
+                const timerInput = appointmentModal.querySelector('.timer-input');
+                const taskInput = appointmentModal.querySelector('.task-input');
+                const taskTimeInput = appointmentModal.querySelector('.task-time-input');
+                const titleInput = appointmentModal.querySelector('.appointment-title-input');
+                
+                // Reset form fields
+                timerInput.value = '24';
+                taskInput.value = '';
+                taskTimeInput.value = '';
+                titleInput.value = '';
+                
+                // Show modal
+                appointmentModal.style.display = 'block';
+                setTimeout(() => {
+                    appointmentModal.classList.add('show');
+                    initializeAppointmentModal();
+                }, 10);
+            });
+            
+            function initializeAppointmentModal() {
+                const appointmentModal = document.getElementById('appointment-modal');
+                const closeBtn = appointmentModal.querySelector('.close-btn');
+                const pauseBtn = appointmentModal.querySelector('.pause-btn');
+                const timerInput = appointmentModal.querySelector('.timer-input');
+                const timerSetBtn = appointmentModal.querySelector('.timer-set-btn');
+                const taskInput = appointmentModal.querySelector('.task-input');
+                const taskTimeInput = appointmentModal.querySelector('.task-time-input');
+                const addTaskBtn = appointmentModal.querySelector('.add-task-btn');
+                const taskList = appointmentModal.querySelector('.task-list');
+                const titleInput = appointmentModal.querySelector('.appointment-title-input');
+                const timerStatus = appointmentModal.querySelector('.timer-status');
+                const icons = appointmentModal.querySelectorAll('.icon');
+                
+                let timer;
+                let isPaused = false;
+                let remainingTime = 24 * 60;
+                let startTime = new Date();
+                let endTime = new Date(startTime.getTime() + remainingTime * 1000);
+                
+                updateTimerStatus();
+                
+                // Icon click handlers
+                icons.forEach(icon => {
+                    icon.addEventListener('click', () => {
+                        if (icon.classList.contains('hourglass')) {
+                            timerInput.focus();
+                        } else if (icon.classList.contains('calendar')) {
+                            const now = new Date();
+                            const timeStr = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+                            timerStatus.textContent = `Started at ${timeStr}`;
+                            startTime = now;
+                            endTime = new Date(now.getTime() + remainingTime * 1000);
+                            updateTimerStatus();
+                        } else if (icon.classList.contains('pencil')) {
+                            taskInput.focus();
+                        }
+                    });
+                });
+
+                // Event Listeners
+                closeBtn.addEventListener('click', () => {
+                    hideModal(appointmentModal);
+                    clearInterval(timer);
+                });
+
+                // Close on outside click
+                appointmentModal.addEventListener('click', (e) => {
+                    if (e.target === appointmentModal) {
+                        hideModal(appointmentModal);
+                        clearInterval(timer);
+                    }
+                });
+                
+                pauseBtn.addEventListener('click', () => {
+                    isPaused = !isPaused;
+                    pauseBtn.textContent = isPaused ? '▶️' : '⏸️';
+                });
+                
+                timerSetBtn.addEventListener('click', () => {
+                    const minutes = parseInt(timerInput.value);
+                    if (minutes > 0) {
+                        remainingTime = minutes * 60;
+                        startTime = new Date();
+                        endTime = new Date(startTime.getTime() + minutes * 60000);
+                        updateTimerStatus();
+                        clearInterval(timer);
+                        timer = setInterval(updateTimer, 1000);
+                    }
+                });
+                
+                // Task input handlers
+                function addTask() {
+                    const taskText = taskInput.value.trim();
+                    const taskTime = parseInt(taskTimeInput.value);
+                    if (taskText && taskTime > 0) {
+                        addTaskToList(taskText, taskTime);
+                        taskInput.value = '';
+                        taskTimeInput.value = '';
+                        taskInput.focus();
+                    }
+                }
+
+                addTaskBtn.addEventListener('click', addTask);
+
+                // Enter key handlers
+                taskInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (taskInput.value.trim()) {
+                            taskTimeInput.focus();
+                        }
+                    }
+                });
+
+                taskTimeInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        addTask();
+                    }
+                });
+
+                timerInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        timerSetBtn.click();
+                    }
+                });
+                
+                function updateTimer() {
+                    if (!isPaused) {
+                        remainingTime--;
+                        if (remainingTime <= 0) {
+                            clearInterval(timer);
+                            appointmentModal.querySelector('.time-remaining').innerHTML = '0<span>min REMAIN</span>';
+                            return;
+                        }
+                        const minutes = Math.floor(remainingTime / 60);
+                        appointmentModal.querySelector('.time-remaining').innerHTML = `${minutes}<span>min REMAIN</span>`;
+                    }
+                }
+                
+                function updateTimerStatus() {
+                    const startTimeStr = startTime.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+                    const endTimeStr = endTime.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+                    timerStatus.textContent = `ending at ${endTimeStr} / Started at ${startTimeStr}`;
+                }
+                
+                function addTaskToList(text, timeInMinutes) {
+                    const taskItem = document.createElement('div');
+                    taskItem.className = 'task-item';
+                    taskItem.innerHTML = `
+                        <span class="task-checkbox">○</span>
+                        <span class="task-text">${text}</span>
+                        <span class="task-time">in ${timeInMinutes}min</span>
+                        <button class="delete-task">×</button>
+                    `;
+                    
+                    const checkbox = taskItem.querySelector('.task-checkbox');
+                    checkbox.addEventListener('click', () => {
+                        checkbox.textContent = checkbox.textContent === '○' ? '●' : '○';
+                    });
+                    
+                    const deleteBtn = taskItem.querySelector('.delete-task');
+                    deleteBtn.addEventListener('click', () => taskItem.remove());
+                    
+                    taskList.appendChild(taskItem);
+                }
+                
+                // Start timer
+                timer = setInterval(updateTimer, 1000);
+            }
+            
+            document.getElementById('theme-btn').addEventListener('click', switchTheme);
+            
+            function updateTaskStatus() {
+                const okTasks = tasks.filter(task => task.priority !== 'overdue' && task.priority !== 'urgentHigh' && task.priority !== 'normalHigh').length;
+                const lateTasks = tasks.filter(task => task.priority === 'overdue' || task.priority === 'urgentHigh' || task.priority === 'normalHigh').length;
+                document.getElementById('ok-status').textContent = `${okTasks} OK!`;
+                document.getElementById('late-status').textContent = `${lateTasks} Late!`;
+            }
+            updateTaskStatus();
+
+            let currentThemeIndex = parseInt(localStorage.getItem('currentThemeIndex'));
+            if (isNaN(currentThemeIndex)) {
+                currentThemeIndex = 0;
+                localStorage.setItem('currentThemeIndex', currentThemeIndex);
+            }
+    
+            let ratingModalElement = document.getElementById('rating-modal');
+            let progressModalElement = document.getElementById('progress-modal');
+            let settingsModalElement = document.getElementById('settings-modal');
+            
+            function hideModal(modal) {
+                modal.classList.remove('show');
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                }, 500);
+            }
+            
+            function showRatingPopup(taskText) {
+                const oldRatingModal = document.getElementById('rating-modal');
+                const newRatingModal = oldRatingModal.cloneNode(true);
+                oldRatingModal.parentNode.replaceChild(newRatingModal, oldRatingModal);
+                ratingModalElement = newRatingModal;
+            
+                ratingModalElement.addEventListener('click', (e) => {
+                    if (e.target === ratingModalElement) {
+                        hideModal(ratingModalElement);
+                    }
+                });
+            
+                const escapeHandler = (e) => {
+                    if (e.key === 'Escape') {
+                        hideModal(ratingModalElement);
+                        document.removeEventListener('keydown', escapeHandler);
+                    }
+                };
+                document.addEventListener('keydown', escapeHandler);
+            
+                ratingModalElement.style.display = 'block';
+                setTimeout(() => {
+                    ratingModalElement.classList.add('show');
+                }, 10);
+            
+                const submitRatingBtn = ratingModalElement.querySelector('#submit-rating');
+                submitRatingBtn.onclick = function() {
+                    const importance = parseInt(ratingModalElement.querySelector('#importance').value) || 3;
+                    const complexity = parseInt(ratingModalElement.querySelector('#complexity').value) || 3;
+                    const enjoyment = parseInt(ratingModalElement.querySelector('#enjoyment').value) || 3;
+                    const dueDate = ratingModalElement.querySelector('#due-date').value;
+                    const streamSelect = ratingModalElement.querySelector('#stream-select');
+                    const chosenStream = streamSelect.value || activeStream || 'All';
+            
+                    const newTask = {
+                        id: generateUniqueId(),
+                        name: taskText,
+                        description: '',
+                        priority: determinePriorityClass(dueDate),
+                        addedDate: new Date().toISOString(),
+                        dueDate: dueDate || '',
+                        notes: [],
+                        filePaths: [],
+                        complexity: complexity,
+                        enjoyment: enjoyment,
+                        importance: importance,
+                        stream: (chosenStream === '') ? 'All' : chosenStream
+                    };
+            
+                    tasks.push(newTask);
+                    saveTasks();
+                    addTask(newTask);
+            
+                    ratingModalElement.querySelector('#importance').value = 3;
+                    ratingModalElement.querySelector('#complexity').value = 3;
+                    ratingModalElement.querySelector('#enjoyment').value = 3;
+                    ratingModalElement.querySelector('#due-date').value = '';
+                    ratingModalElement.querySelector('#importance-value').textContent = '3';
+                    ratingModalElement.querySelector('#complexity-value').textContent = '3';
+                    ratingModalElement.querySelector('#enjoyment-value').textContent = '3';
+            
+                    hideModal(ratingModalElement);
+                    document.removeEventListener('keydown', escapeHandler);
+                };
+            
+                const ratingCloseBtn = ratingModalElement.querySelector('.close-btn');
+                ratingCloseBtn.onclick = function() {
+                    hideModal(ratingModalElement);
+                    document.removeEventListener('keydown', escapeHandler);
+                };
+            
+                initializeSliderDisplays(ratingModalElement);
+
+                const dropdown = ratingModalElement.querySelector('#stream-select');
+                if (dropdown) {
+                    dropdown.value = activeStream;
+                }
+            }
+            
+            function openSettingsModal() {
+                const oldSettingsModal = document.getElementById('settings-modal');
+                const newSettingsModal = oldSettingsModal.cloneNode(true);
+                oldSettingsModal.parentNode.replaceChild(newSettingsModal, oldSettingsModal);
+                settingsModalElement = newSettingsModal;
+            
+                settingsModalElement.addEventListener('click', (e) => {
+                    if (e.target === settingsModalElement) {
+                        hideModal(settingsModalElement);
+                    }
+                });
+            
+                const escapeHandler = (e) => {
+                    if (e.key === 'Escape') {
+                        hideModal(settingsModalElement);
+                        document.removeEventListener('keydown', escapeHandler);
+                    }
+                };
+                document.addEventListener('keydown', escapeHandler);
+            
+                settingsModalElement.style.display = 'block';
+                setTimeout(() => {
+                    settingsModalElement.classList.add('show');
+                }, 10);
+            
+                const settingsCloseBtn = settingsModalElement.querySelector('.settings-close-btn');
+                settingsCloseBtn.onclick = function() {
+                    hideModal(settingsModalElement);
+                    document.removeEventListener('keydown', escapeHandler);
+                };
+            
+                const speedSlider = settingsModalElement.querySelector('#speed-slider');
+                const speedValueDisplay = settingsModalElement.querySelector('#speed-value');
+                speedSlider.value = animationSpeed;
+                speedValueDisplay.textContent = speedSlider.value;
+                speedSlider.addEventListener('input', function() {
+                    speedValueDisplay.textContent = this.value;
+                    animationSpeed = parseFloat(this.value);
+                    localStorage.setItem('animationSpeed', animationSpeed);
+                    activeTweens.forEach(tween => {
+                        const remaining = tween._duration - (Date.now() - tween._startTime) / 1000 * 1000;
+                        tween._duration = (tween._duration / animationSpeed);
+                    });
+                });
+            }
+            
+            function triggerTheme() {
+                setTimeout(() => {
+                    const existingCanvas = document.querySelector('#bg-canvas');
+                    if (existingCanvas) {
+                        existingCanvas.remove();
+                    }
+
+                    currentThemeIndex = parseInt(localStorage.getItem('currentThemeIndex')) || 0;
+                    updateThemeStylesheet(currentThemeIndex);
+            
+                    const themeBtn = document.getElementById('theme-btn');
+                    themeBtn.textContent = themeEmojis[currentThemeIndex];
+            
+                    localStorage.setItem('currentThemeIndex', currentThemeIndex);
+                }, 1000);
+                console.log ('Current theme is:', themes[currentThemeIndex]);
+            }
+            
+            function switchTheme() {
+                document.body.style.opacity = 0; 
+                setTimeout(() => {
+                    currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+                    updateThemeStylesheet(currentThemeIndex);
+            
+                    const themeBtn = document.getElementById('theme-btn');
+                    themeBtn.textContent = themeEmojis[currentThemeIndex];
+            
+                    document.body.style.opacity = 1; 
+                    localStorage.setItem('currentThemeIndex', currentThemeIndex);
+                    triggerTheme();
+                }, 1000);
+            }
+            
+            document.addEventListener('DOMContentLoaded', () => {
+                const savedThemeIndex = parseInt(localStorage.getItem('currentThemeIndex'));
+                if(!isNaN(savedThemeIndex) && savedThemeIndex >= 0 && savedThemeIndex < themes.length){
+                    currentThemeIndex = savedThemeIndex;
+                    updateThemeStylesheet(currentThemeIndex);
+                } else {
+                    currentThemeIndex = 0;
+                    updateThemeStylesheet(currentThemeIndex);
+                    localStorage.setItem('currentThemeIndex', currentThemeIndex);
+                }
+                
+                const themeBtn = document.getElementById('theme-btn');
+                themeBtn.textContent = themeEmojis[currentThemeIndex];
+                
+                const savedSpeed = parseFloat(localStorage.getItem('animationSpeed'));
+                if (!isNaN(savedSpeed)) {
+                    animationSpeed = savedSpeed;
+                } else {
+                    animationSpeed = 1;
+                    localStorage.setItem('animationSpeed', animationSpeed);
+                }
+            });
+            
+            function deleteTaskItem(taskId) {
+                tasks = tasks.filter(task => task.id !== taskId);
+                saveTasks();
+                const taskElement = document.querySelector(`.task[data-id="${taskId}"]`);
+                if (taskElement) {
+                    const tween = activeTweens.find(t => t._object === taskElement);
+                    if (tween) {
+                        tween.stop();
+                        activeTweens = activeTweens.filter(t => t !== tween);
+                    }
+                    taskElement.remove();
+                }
+                updateTaskStatus();
+            }
+            
+            function openProgressModal(taskData) {
+                const taskElement = document.querySelector(`.task[data-id="${taskData.id}"]`);
+                const oldProgressModal = document.getElementById('progress-modal');
+                const newProgressModal = oldProgressModal.cloneNode(true);
+                oldProgressModal.parentNode.replaceChild(newProgressModal, oldProgressModal);
+                progressModalElement = newProgressModal;
+            
+                const deleteTaskBtns = progressModalElement.querySelectorAll('.delete-task-btn');
+                deleteTaskBtns.forEach(btn => btn.remove());
+            
+                progressModalElement.querySelector('#modal-task-header').dataset.id = taskData.id;
+            
+                const deleteTaskBtn = document.createElement('button');
+                deleteTaskBtn.textContent = 'Delete Task';
+                deleteTaskBtn.className = 'delete-task-btn';
+            
+                deleteTaskBtn.onclick = function() {
+                    const taskId = progressModalElement.querySelector('#modal-task-header').dataset.id;
+                    deleteTaskItem(taskId);
+                    hideModal(progressModalElement);
+                };
+                progressModalElement.querySelector('.progress-modal-content').appendChild(deleteTaskBtn);
+            
+                if (taskElement) {
+                    const tween = activeTweens.find(t => t._object === taskElement);
+                    if (tween) {
+                        tween.pause();
+                    }
+                }
+            
+                progressModalElement.style.display = 'block';
+                setTimeout(() => progressModalElement.classList.add('show'), 10);
+            
+                function hideModalInternal() {
+                    progressModalElement.classList.remove('show');
+                    if (taskElement) {
+                        const tween = activeTweens.find(t => t._object === taskElement);
+                        if (tween) {
+                            tween.resume();
+                        }
+                    }
+                    setTimeout(() => progressModalElement.style.display = 'none', 500);
+                }
+            
+                const modalContent = progressModalElement.querySelector('.progress-modal-content');
+            
+                document.querySelectorAll('.task').forEach(elem => {
+                    if (elem !== taskElement) {
+                        elem.style.zIndex = '1';
+                    }
+                });
+            
+                const addedDate = new Date(taskData.addedDate).toLocaleDateString();
+                const dueDate = taskData.dueDate ? new Date(taskData.dueDate).toLocaleDateString() : 'N/A';
+                progressModalElement.querySelector('#modal-task-header').textContent = `${taskData.name}`;
+                progressModalElement.querySelector('#modal-task-dateheader').textContent = 
+                   `(Added ${addedDate}, Due ${dueDate})`;
+            
+                const taskDescription = progressModalElement.querySelector('#task-description');
+                taskDescription.value = taskData.description;
+            
+                populateProgressNotes(taskData);
+                populateFilePaths(taskData);
+            
+                taskDescription.addEventListener('input', function() {
+                    taskData.description = this.value;
+                    saveTasks();
+                });
+            
+                const addProgressNoteBtn = progressModalElement.querySelector('#add-progress-note');
+                addProgressNoteBtn.onclick = function() {
+                    const newNoteText = progressModalElement.querySelector('#new-progress-note').value.trim();
+                    if (newNoteText) {
+                        const newNote = {
+                            date: new Date().toLocaleString(),
+                            text: newNoteText,
+                            completed: false
+                        };
+                        taskData.notes.push(newNote);
+                        saveTasks();
+                        addProgressNoteToList(newNote, taskData);
+                        progressModalElement.querySelector('#new-progress-note').value = '';
+                    }
+                };
+            
+                const fileTray = progressModalElement.querySelector('#file-tray');
+                const fileList = progressModalElement.querySelector('#file-list');
+            
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    fileTray.addEventListener(eventName, preventDefaults, false);
+                    document.body.addEventListener(eventName, preventDefaults, false);
+                });
+            
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    fileTray.addEventListener(eventName, () => fileTray.classList.add('dragover'), false);
+                });
+            
+                ['dragleave', 'drop'].forEach(eventName => {
+                    fileTray.addEventListener(eventName, () => fileTray.classList.remove('dragover'), false);
+                });
+            
+                fileTray.addEventListener('drop', handleDrop, false);
+            
+                function preventDefaults(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            
+                function handleDrop(e) {
+                    const dt = e.dataTransfer;
+                    const files = dt.files;
+                    handleFiles(files, taskData);
+                }
+            
+                function handleFiles(files, taskData) {
+                    [...files].forEach(file => {
+                        const filePath = file.path || file.name;
+                        const fileName = file.name;
+                        const newFile = {
+                            name: fileName,
+                            path: filePath
+                        };
+                        taskData.filePaths.push(newFile);
+                        saveTasks();
+                        addFileToList(newFile, taskData);
+                    });
+                }
+            
+                const closeBtn = progressModalElement.querySelector('.close-btn');
+                progressModalElement.addEventListener('click', function(event) {
+                    if (event.target === progressModalElement) {
+                        hideModalInternal();
+                    }
+                });
+                
+                closeBtn.addEventListener('click', hideModalInternal);
+                
+                document.addEventListener('keydown', function(event) {
+                    if (event.key === 'Escape' && progressModalElement.style.display === 'block') {
+                        hideModalInternal();
+                    }
+                });
+            }
+            
+            function determinePriority(complexity, enjoyment, importance) {
+                // Deprecated in favor of determinePriorityClass(dueDate)
+                if (importance >= 4 && complexity >= 4) return 'overdue';
+                if (importance >= 3) return 'medium';
+                return 'low';
+            }
+            
+            function updateSliderValue(sliderElement, displayElement) {
+                displayElement.textContent = sliderElement.value;
+                sliderElement.addEventListener('input', function() {
+                    displayElement.textContent = this.value;
+                });
+            }
+            
+            function initializeSliderDisplays(modal) {
+                const importanceSlider = modal.querySelector('#importance');
+                const importanceDisplay = modal.querySelector('#importance-value');
+                const complexitySlider = modal.querySelector('#complexity');
+                const complexityDisplay = modal.querySelector('#complexity-value');
+                const enjoymentSlider = modal.querySelector('#enjoyment');
+                const enjoymentDisplay = modal.querySelector('#enjoyment-value');
+            
+                updateSliderValue(importanceSlider, importanceDisplay);
+                updateSliderValue(complexitySlider, complexityDisplay);
+                updateSliderValue(enjoymentSlider, enjoymentDisplay);
+            }
+            
+            function populateProgressNotes(taskData) {
+                const notesList = progressModalElement.querySelector('#progress-notes-list');
+                notesList.innerHTML = '';
+                taskData.notes.forEach(note => {
+                    addProgressNoteToList(note, taskData);
+                });
+            }
+            
+            function addProgressNoteToList(note, taskData) {
+                const notesList = progressModalElement.querySelector('#progress-notes-list');
+                const noteItem = document.createElement('div');
+                noteItem.className = 'progress-note-item';
+            
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = note.completed;
+                checkbox.addEventListener('change', function() {
+                    note.completed = this.checked;
+                    saveTasks();
+                });
+            
+                const noteText = document.createElement('span');
+                noteText.className = 'note-text';
+                noteText.textContent = `${note.date}: ${note.text}`;
+            
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = '🗑️';
+                deleteBtn.title = 'Delete Note';
+                deleteBtn.onclick = function() {
+                    const index = taskData.notes.indexOf(note);
+                    if (index > -1) {
+                        taskData.notes.splice(index, 1);
+                        saveTasks();
+                        notesList.removeChild(noteItem);
+                    }
+                };
+            
+                noteItem.appendChild(checkbox);
+                noteItem.appendChild(noteText);
+                noteItem.appendChild(deleteBtn);
+                notesList.appendChild(noteItem);
+            }
+            
+            function populateFilePaths(taskData) {
+                const fileList = progressModalElement.querySelector('#file-list');
+                fileList.innerHTML = '';
+                taskData.filePaths.forEach(file => {
+                    addFileToList(file, taskData);
+                });
+            }
+            
+            function addFileToList(file, taskData) {
+                const fileList = progressModalElement.querySelector('#file-list');
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+            
+                const fileIcon = document.createElement('img');
+                fileIcon.src = getFileIcon(file.name);
+                fileIcon.alt = file.name;
+                fileIcon.title = file.name;
+                fileIcon.onclick = function() {
+                    fileItem.classList.toggle('show');
+                };
+            
+                const fileInfo = document.createElement('div');
+                fileInfo.className = 'file-info';
+                fileInfo.innerHTML = `<span class="file-name">${file.name}</span><br><span class="file-path">${file.path}</span>`;
+            
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'remove-file';
+                removeBtn.textContent = '✖️';
+                removeBtn.title = 'Remove File';
+                removeBtn.onclick = function() {
+                    const index = taskData.filePaths.indexOf(file);
+                    if (index > -1) {
+                        taskData.filePaths.splice(index, 1);
+                        saveTasks();
+                        fileList.removeChild(fileItem);
+                    }
+                };
+            
+                fileItem.appendChild(fileIcon);
+                fileItem.appendChild(fileInfo);
+                fileItem.appendChild(removeBtn);
+                fileList.appendChild(fileItem);
+            }
+            
+            function getFileIcon(fileName) {
+                const extension = fileName.split('.').pop().toLowerCase();
+                const icons = {
+                    'pdf': 'https://img.icons8.com/color/48/000000/pdf.png',
+                    'doc': 'https://img.icons8.com/color/48/000000/doc.png',
+                    'docx': 'https://img.icons8.com/color/48/000000/doc.png',
+                    'jpg': 'https://img.icons8.com/color/48/000000/image.png',
+                    'jpeg': 'https://img.icons8.com/color/48/000000/image.png',
+                    'png': 'https://img.icons8.com/color/48/000000/image.png',
+                    'txt': 'https://img.icons8.com/color/48/000000/txt.png',
+                    'default': 'https://img.icons8.com/color/48/000000/file.png'
+                };
+                return icons[extension] || icons['default'];
+            }
+            
+            function attachHoverListeners(taskElement, taskData) {
+                let hoverTimer;
+            
+                taskElement.addEventListener('mouseenter', () => {
+                    if (taskElement.style.pointerEvents === 'none' || taskElement.style.opacity === '0') {
+                        return;
+                    }
+                    const currentTransform = getComputedStyle(taskElement).transform;
+                    let translateX = 0;
+                    if (currentTransform !== 'none') {
+                        const matrixValues = currentTransform.match(/matrix.*\((.+)\)/);
+                        if (matrixValues) {
+                            translateX = parseFloat(matrixValues[1].split(',')[4]);
+                        }
+                    }
+                    taskElement.style.transition = 'transform 0.3s ease';
+                    taskElement.style.transform = `translateX(${translateX}px) scale(1.6)`;
+                    taskElement.style.transformOrigin = 'center';
+            
+                    hoverTimer = setTimeout(() => {
+                        openProgressModal(taskData);
+                        const tween = activeTweens.find(t => t._object === taskElement);
+                        if (tween) {
+                            tween.pause();
+                        }
+                    }, 800);
+                });
+            
+                taskElement.addEventListener('mouseleave', () => {
+                    clearTimeout(hoverTimer);
+                    const currentTransform = getComputedStyle(taskElement).transform;
+                    let translateX = 0;
+                    if (currentTransform !== 'none') {
+                        const matrixValues = currentTransform.match(/matrix.*\((.+)\)/);
+                        if (matrixValues) {
+                            translateX = parseFloat(matrixValues[1].split(',')[4]);
+                        }
+                    }
+                    taskElement.style.transition = 'transform 0.3s ease';
+                    taskElement.style.transform = `translateX(${translateX}px) scale(1)`;
+            
+                    const tween = activeTweens.find(t => t._object === taskElement);
+                    if (tween) {
+                        tween.resume();
+                    }
+                });
+
+                taskElement.addEventListener('click', () => {
+                    if (taskElement.style.pointerEvents !== 'none') {
+                        openProgressModal(taskData);
+                    }
+                });
+            }
+            
+            function manageTweens() {
+                const now = Date.now();
+                activeTweens = activeTweens.filter(tween => {
+                    if (!tween._object || !document.contains(tween._object)) {
+                        tween.stop();
+                        return false;
+                    }
+                    if (!tween.isPlaying()) {
+                        const pauseDuration = now - (tween._pauseTime || 0);
+                        if (pauseDuration > 30000) {
+                            tween.resume();
+                        }
+                    }
+                    return true;
+                });
+            }
+            setInterval(manageTweens, 5000);
+            
+            setInterval(() => {
+                const now = new Date();
+                const hours = now.getHours().toString().padStart(2, '0');
+                const minutes = now.getMinutes().toString().padStart(2, '0');
+                document.getElementById('current-time').textContent = `${hours}:${minutes}`;
+                document.getElementById('current-date').textContent = now.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+            }, 1000);
+            
+            /**
+             * Initializes the date and time display.
+             */
+            function initializeDateTimeDisplay() {
+                const currentDateElement = document.getElementById('current-date');
+                const now = new Date();
+                currentDateElement.textContent = now.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+            }
+/***** TASK MANAGER MODAL SETUP *****/
+function initializeTaskManagerModal() {
+    const eyeBtn = document.getElementById('eye-btn');
+    const taskManagerModal = document.getElementById('task-manager-modal');
+    const taskManagerCloseBtn = taskManagerModal.querySelector('.close-btn');
+    const tasksTableBody = document.querySelector('#tasks-table tbody');
+
+    eyeBtn.addEventListener('click', () => {
+            if (taskManagerModal.classList.contains('show')) {
+                hideModal(taskManagerModal);
+            } else {
+                populateTasksTable();
+                taskManagerModal.style.display = 'block';
+                setTimeout(() => {
+                    taskManagerModal.classList.add('show');
+                }, 10);
+            }
+        });
+
+        taskManagerCloseBtn.addEventListener('click', () => {
+            hideModal(taskManagerModal);
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target === taskManagerModal) {
+                hideModal(taskManagerModal);
+            }
+        });
+
+    /* 
+       Developer Note: We are adding a 'Stream' column to the table. 
+       We place a dropdown in each row to allow the user to change the task's stream, 
+       including a 'None' option that reverts it to no specific tab (treated like 'All').
+    */
+    function populateTasksTable() {
+        tasksTableBody.innerHTML = '';
+        tasks.forEach(task => {
+            const row = document.createElement('tr');
+
+            const nameCell = document.createElement('td');
+            nameCell.textContent = task.name;
+            nameCell.contentEditable = true;
+            nameCell.addEventListener('blur', () => {
+                const newName = nameCell.textContent.trim();
+                if (newName) {
+                    task.name = newName;
+                    saveTasks();
+                    updateTaskStatus();
+                } else {
+                    nameCell.textContent = task.name;
+                }
+            });
+            row.appendChild(nameCell);
+
+            const priorityCell = document.createElement('td');
+            priorityCell.textContent = task.priority;
+            row.appendChild(priorityCell);
+
+            /* -- ADDED FEATURE: STREAM DROPDOWN -- */
+            const streamCell = document.createElement('td');
+            const streamSelect = document.createElement('select');
+
+            // Include a 'None' option
+            const noneOption = document.createElement('option');
+            noneOption.value = '';
+            noneOption.textContent = 'None';
+            streamSelect.appendChild(noneOption);
+
+            // Populate the dropdown with existing streams
+            streams.forEach(s => {
+                const option = document.createElement('option');
+                option.value = s;
+                option.textContent = s;
+                streamSelect.appendChild(option);
+            });
+
+            // If task.stream is empty, set dropdown to none; otherwise, set it to the saved stream
+            streamSelect.value = task.stream || '';
+
+            // On change, update the task's stream property and re-save
+            streamSelect.addEventListener('change', () => {
+                task.stream = streamSelect.value || '';
+                saveTasks();
+                const taskElement = document.querySelector(`.task[data-id="${task.id}"]`);
+                if (taskElement) {
+                    taskElement.dataset.stream = task.stream || 'All';
+                }
+                updateTaskVisibility(); // reflect changes in real time
+            });
+
+            streamCell.appendChild(streamSelect);
+            row.appendChild(streamCell);
+            /* -- END STREAM DROPDOWN FEATURE -- */
+
+            const dueDateCell = document.createElement('td');
+            dueDateCell.textContent = task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'N/A';
+            row.appendChild(dueDateCell);
+
+            const actionsCell = document.createElement('td');
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'Delete';
+            deleteBtn.className = 'action-btn delete-btn';
+            deleteBtn.addEventListener('click', () => {
+                deleteTaskItem(task.id);
+                populateTasksTable();
+            });
+            actionsCell.appendChild(deleteBtn);
+            row.appendChild(actionsCell);
+
+            tasksTableBody.appendChild(row);
+        });
+    }
+}
+
+/* Call the initializer after all other scripts have run */
+document.addEventListener('DOMContentLoaded', () => {
+    initializeTaskManagerModal(); 
+});
+
+
+function autoSyncData() {
+    console.log('Auto-syncing data...');
+    // Call your uploadToDatabase function here to sync data
+    uploadToDatabase();
+    console.log('Data synced.');
+}
+
+// Use setInterval to call autoSyncData every 10 seconds
+function startDataSyncScheduler() {
+    // 10000 milliseconds = 10 seconds
+    setInterval(() => {
+        autoSyncData();
+    }, 5000);
+    console.log('Data syncing scheduler started.');
+}
+
+// Start the scheduler when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+            console.log('Data sync scheduler started.');
+        });
+
+        // Appointment Modal Functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const appointmentModal = document.getElementById('appointment-modal');
+            const closeBtn = appointmentModal.querySelector('.close-btn');
+            const pauseBtn = appointmentModal.querySelector('.pause-btn');
+            let timer;
+            let isPaused = false;
+            let remainingTime = 24 * 60; // 24 minutes in seconds
+
+            // Close modal functionality
+            closeBtn.addEventListener('click', () => {
+                hideModal(appointmentModal);
+                clearInterval(timer);
+            });
+
+            // Close on outside click
+            appointmentModal.addEventListener('click', (e) => {
+                if (e.target === appointmentModal) {
+                    hideModal(appointmentModal);
+                    clearInterval(timer);
+                }
+            });
+
+            // Pause button functionality
+            pauseBtn.addEventListener('click', () => {
+                isPaused = !isPaused;
+                pauseBtn.textContent = isPaused ? '▶️' : '⏸️';
+            });
+
+            // Timer functionality
+            function updateTimer() {
+                if (!isPaused) {
+                    remainingTime--;
+                    if (remainingTime <= 0) {
+                        clearInterval(timer);
+                        appointmentModal.querySelector('.time-remaining').innerHTML = '0<span>min REMAIN</span>';
+                        return;
+                    }
+                    const minutes = Math.floor(remainingTime / 60);
+                    appointmentModal.querySelector('.time-remaining').innerHTML = `${minutes}<span>min REMAIN</span>`;
+                }
+            }
+
+            // Task checkbox functionality
+            const checkboxes = appointmentModal.querySelectorAll('.task-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('click', () => {
+                    checkbox.textContent = checkbox.textContent === '○' ? '●' : '○';
+                });
+            });
+
+            // Initialize timer
+            timer = setInterval(updateTimer, 1000);
+        });
+
+        // Create the SVG Sun dynamically
+const sunContainer = document.createElement("div");
+sunContainer.style.position = "fixed";
+sunContainer.style.top = "10px";
+sunContainer.style.left = "50%";
+sunContainer.style.transform = "translateX(-50%)";
+sunContainer.style.width = "90vw";
+sunContainer.style.height = "90vh";
+sunContainer.style.pointerEvents = "none";
+sunContainer.style.opacity = "0"; // Initially hidden
+sunContainer.style.transition = "opacity 0.2s ease-out";
+document.body.appendChild(sunContainer);
+
+const xmlns = "http://www.w3.org/2000/svg";
+const svg = document.createElementNS(xmlns, "svg");
+svg.setAttribute("viewBox", "0 0 100 100");
+svg.setAttribute("width", "100%");
+svg.setAttribute("height", "100%");
+sunContainer.appendChild(svg);
+
+const centerX = 50, centerY = 50;
+
+// Define sun rays' direction vectors
+const baseRays = [
+    { dx: 0,  dy: -50 }, { dx: 0,  dy: 50 },
+    { dx: -50, dy: 0 },  { dx: 50, dy: 0 },
+    { dx: -40, dy: -40}, { dx: 40, dy: 40 },
+    { dx: 40, dy: -40}, { dx: -40, dy: 40 }
+];
+
+const rays = [];
+baseRays.forEach(direction => {
+    const ray = document.createElementNS(xmlns, "line");
+    ray.setAttribute("x1", centerX);
+    ray.setAttribute("y1", centerY);
+    ray.setAttribute("x2", centerX);
+    ray.setAttribute("y2", centerY);
+    ray.setAttribute("stroke", "orange");
+    ray.setAttribute("stroke-width", "3");
+    ray.setAttribute("opacity", "0"); // Start fully invisible
+    ray.style.transition = "transform 0.2s ease-out, opacity 0.2s ease-out";
+    svg.appendChild(ray);
+    ray.direction = direction;
+    rays.push(ray);
+});
+
+
+// Create Sun Core
+const sunCore = document.createElementNS(xmlns, "circle");
+sunCore.setAttribute("cx", "50");
+sunCore.setAttribute("cy", "50");
+sunCore.setAttribute("r", "15");
+sunCore.setAttribute("fill", "yellow");
+sunCore.setAttribute("opacity", "1"); // Always fully visible
+svg.appendChild(sunCore);
+
+
+// Track brightness state
+let lastBrightness = 1;
+
+// Mouse movement handler
+document.addEventListener("mousemove", (event) => {
+    const topThreshold = window.innerHeight * 0.05;
+    
+    if (event.clientY <= topThreshold) {
+        let brightness = event.clientX / window.innerWidth; // Normalize to [0,1]
+        lastBrightness = brightness; // Store last brightness
+
+        // Adjust page brightness
+        document.body.style.filter = `brightness(${brightness})`;
+
+        // Show sun without fading the core
+        sunContainer.style.opacity = "1";
+
+        // Update sun rays without affecting the core
+        const scale = 0.5 + brightness;
+        rays.forEach(ray => {
+            ray.setAttribute("x2", centerX + ray.direction.dx * scale);
+            ray.setAttribute("y2", centerY + ray.direction.dy * scale);
+            ray.setAttribute("opacity", brightness); // Only rays change opacity
+        });
+    } else {
+        // Keep brightness at last value but hide the sun (without affecting core visibility)
+        sunContainer.style.opacity = "0";
+    }
+});
+
+// Ensure brightness stays at the last set value
+document.body.style.filter = `brightness(${lastBrightness})`;
+
+let currentBackground = 'https://i.imgur.com/jpaUTeY.jpeg';
+
+function scrollLeft() {
+    const container = document.getElementById('thumbnail-container');
+    container.scrollLeft -= 500;
+}
+
+function scrollRight() {
+    const container = document.getElementById('thumbnail-container');
+    container.scrollLeft += 500;
+}
+
+function changeBackground(imageUrl) {
+    if (currentBackground !== imageUrl) {
+        document.body.style.backgroundImage = `url(${imageUrl})`;
+        document.body.style.backgroundSize = `200% 200%`;
+         currentBackground = imageUrl;
+        updateSelected(imageUrl);
+    }
+}
+
+window.changeBackground = changeBackground;
+
+function updateSelected(imageUrl) {
+    const images = document.querySelectorAll('.selector img');
+    images.forEach(img => {
+        if (img.src === imageUrl) {
+            img.classList.add('selected');
+        } else {
+            img.classList.remove('selected');
+        }
+    });
+}
+
+
+// Simplified scroll handling
+const thumbnailContainer = document.getElementById('thumbnail-container');
+thumbnailContainer.addEventListener('wheel', (event) => {
+    event.preventDefault();
+    thumbnailContainer.scrollLeft += event.deltaY;
+});
+
+
+
+
+</script>
+
+    </body>
+    
+</html>  

@@ -1,0 +1,605 @@
+/* General Styles */
+
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    font-family: 'Adogare', 'Arial', sans-serif;
+    overflow: hidden;
+    position: relative;
+    background: linear-gradient(40deg, rgb(29, 221, 160), rgb(21, 88, 95), rgb(179, 130, 211),rgb(243, 163, 106), rgb(179, 130, 211), rgb(33, 80, 141), rgb(21, 221, 138));
+    background-size: 2100% 100%; /* Expand the gradient to allow seamless movement */
+    animation: gradientLoop 210s linear infinite;
+
+}
+
+@keyframes gradientLoop {
+    0% {
+        background-position: 0% 50%;
+    }
+    100% {
+        background-position: 100% 50%;
+    }
+}
+
+
+/* Canvas Overlay */
+#bg-canvas {
+    position: fixed;  /* Ensures the canvas stays fixed in the background */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    /* Ensure Three.js or your canvas script handles the gradient */
+}
+
+/* Top Bar */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1px 20px;
+    background: linear-gradient(168deg,rgba(255, 255, 255, 0.646), rgba(175, 175, 175, 0.76), rgba(237, 224, 224, 0.661), rgb(255, 255, 255),rgba(175, 175, 175, 0.76), rgba(237, 224, 224, 0.661),rgba(255, 255, 255, 0.827));         
+       border-bottom: 4px solid #ddd0f3b7;
+    box-shadow: 0 6px 12px rgb(255, 255, 255);
+    border-radius: 0 0 20px 20px;
+    color: #ffffff;
+    position: fixed;
+    top: 0;
+    font-size: 2rem;
+    width: 80%;
+    font-weight: bold;
+    height: 8%;
+    z-index: 1000;
+}
+
+.top-left, .top-center, .top-right {
+    text-align: center;
+}
+
+.top-left {
+    font-size: 1rem;
+    text-align: left;
+    text-shadow: 0 0 6px rgb(233, 255, 221);
+}
+
+.top-right {
+    font-size: 1.1rem;
+    text-align: left;
+    font-family: Trebuchet MS;
+    text-shadow: 0 0 6px rgb(233, 255, 221);
+    color: rgb(255, 255, 255);
+}
+
+.top-center {
+    color:green;
+}
+
+/* Main Area */
+.main-area {
+    position: relative;
+    width: 100%;
+    height: calc(100% - 100px); /* Adjust height considering top and footer bars */
+    overflow: auto;
+    padding-top: 70px; /* Adjust for fixed top bar height */
+    padding-bottom: 70px; /* Adjust for fixed footer bar height */
+}
+
+/* Task Styles */
+.task {
+    position: absolute;
+    display: inline-block;
+    padding: 10px 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background: rgba(28, 4, 72, 0.696); /* Slight transparency for better layering */
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: all 0.4s ease;
+    cursor: pointer;
+    color: #333;
+    text-shadow: none;
+}
+
+.task:hover {
+    transform: scale(1.4);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.task.modal-active {
+    z-index: 1001;
+    transition: transform 0.3s ease-out;
+}
+
+.task.overdue {
+    color: #e53935; /* Red */
+    font-weight: bold;
+    font-size: 1.8em;
+    text-transform: uppercase;
+}
+
+.task.medium {
+    color: #fb8c00; /* Orange */
+    font-weight: bold;
+    font-size: 1.5em;
+}
+
+.task.low {
+    color: #616161; /* Dark Gray */
+    font-style: italic;
+    font-size: 1em;
+}
+
+/* Footer Bar */
+.footerBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    border-top: 3px solid #ffffff7d;
+    box-shadow: -4px -4px 8px rgba(255, 255, 255, 0.917);
+    border-radius: 20px 20px 0 0;
+    position: fixed;
+    background: linear-gradient(168deg,rgba(255, 255, 255, 0.646), rgba(175, 175, 175, 0.76), rgba(237, 224, 224, 0.661), rgba(255, 255, 255, 0.263),rgba(175, 175, 175, 0.76), rgba(237, 224, 224, 0.661),rgba(255, 255, 255, 0.827));         
+    bottom: 0;
+    right: 10%; 
+    width: 80%;
+    height:7%;
+    z-index: 1000;
+}
+
+.footer-left, .footer-center, .footer-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.footer-left {
+    justify-content: flex-start;
+    padding-left: 20px;
+}
+
+.footer-center {
+    justify-content: center;
+}
+
+.footer-right {
+    justify-content: flex-end;
+    padding-right: 20px;
+}
+
+/* Status Badges */
+.status {
+    padding: 10px 15px;
+    margin-right: 0px;
+    color: rgb(255, 255, 255);
+    text-shadow: 1px 1px 5px rgb(0, 0, 0);
+    font-size: 1.2em;
+    box-shadow: 0 0px 1px rgb(255, 249, 249);
+    border: solid rgb(233, 248, 228) 3px;
+}
+
+.status.ok {
+    background: linear-gradient(to bottom, #4caf50, #cee2cf);
+    border-radius: 20px 0px 0px 20px;
+}
+
+.status.late {
+    background: linear-gradient(to bottom, #dc291c, #6f1818);
+    border-radius: 0px 20px 20px 0px;
+}
+
+/* Search Input */
+.footer-center input {
+    width: 100%;
+    padding: 2%;
+    font-size: 1.1em;
+    border: 3px solid  #ffffffa9;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-style: bolder;
+    border-radius: 20px;
+    background: linear-gradient(to bottom, rgb(153, 255, 160), white);
+    outline: none;
+    color: rgb(32, 72, 10);
+    margin-right: 20px;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.35);
+    transition: all 0.3s ease;
+    box-shadow: inset 0 3px 5px rgb(15, 32, 2);
+    opacity: 0.37;
+}
+
+.footer-center input:hover {
+    opacity: 0.9;
+    border-color: #4caf50;
+    box-shadow: 0 0 5px #dddedd;
+}
+
+.footer-center input:focus {
+    opacity: 1;
+    padding: 3%;
+    transform: scale(1.5) translateY(-5px);
+    border-color: #ffffff;
+    box-shadow: 0 0 5px #91fa91;
+}
+
+/* Buttons and Icon Buttons */
+.search-btn, .icon-btn {
+    background: linear-gradient(130deg, green, rgba(200, 243, 254, 0.747));
+    color: white;
+    border: solid rgb(158, 252, 169) 2px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.search-btn:hover, .icon-btn:hover {
+    background: #388e3c;
+    transform: scale(1.1);
+}
+
+/* Icons */
+.icon-btn {
+    margin-left: 10px;
+}
+
+.theme-btn {
+    background: linear-gradient(140deg, rgba(0, 35, 95, 0.7), rgba(203, 215, 255, 0.8), rgb(128, 0, 154));
+    margin-left: 20px;
+    margin-right: -22px;
+    font-size: 2.1em;
+    padding: 2px 8px;
+    width: auto;
+    height: 60px;
+    border-radius: 20%;
+    border: 1px solid rgba(255, 255, 255, 0.847);
+    transition: all 0.3s ease;
+}
+
+.theme-btn:hover {
+    opacity: 1;
+    transform: scale(1.3);
+    border: 2.2px solid rgba(255, 255, 255, 1);
+    box-shadow: 0 0 15px pink;
+}
+
+.theme-btn:active {
+    transform: scale(.9);
+}
+
+
+/* Modal Styles */
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 30; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgba(0,0,0,0.4); 
+    transition: opacity 0.5s ease;
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto; 
+    padding: 20px;
+    border: none;
+    border-radius: 10px;
+    opacity: 0;
+    transition: opacity 0.5s ease, transform 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    width: 50%; 
+    box-sizing: border-box;
+}
+
+.modal.show .modal-content {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: black;
+    text-decoration: none;
+}
+
+.modal-content label {
+    display: block;
+    margin-bottom: 10px;
+    color: #333;
+    font-weight: bold;
+}
+
+/* Slider Container */
+.slider-container {
+    margin-bottom: 15px;
+}
+
+/* Slider Styles */
+.slider-container input[type="range"] {
+    width: 100%;
+    margin-top: 5px;
+}
+
+/* Label and Value Alignment */
+.slider-container label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    color: #333;
+}
+
+.modal-content button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+.modal-content button:hover {
+    background-color: #45a049;
+}
+
+/* Progress Modal */
+.progress-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.progress-modal-content {
+    background-color: #fff;
+    position: relative;
+    width: 80%;
+    max-width: 600px;
+    margin: 15vh auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    opacity: 0;
+    transition: opacity 0.5s ease, transform 0.3s ease;
+}
+
+.progress-modal.show .progress-modal-content {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.progress-modal-content label {
+    display: block;
+    margin-bottom: 10px;
+    color: #333;
+    font-weight: bold;
+}
+
+.progress-modal-content textarea,
+.progress-modal-content input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    resize: vertical;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.progress-modal-content button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #008CBA;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s, border 0.2s, color 0.2s;
+}
+
+.progress-modal-content button:hover {
+    background-color: #005977;
+    border: solid 3px rgba(88, 104, 206, 0.8);
+    color: yellow; 
+}
+
+/* Progress Notes List */
+#progress-notes-list {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+
+.progress-note-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #f2f2f2;
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.progress-note-item:hover {
+    background-color: #e0e0e0;
+}
+
+.progress-note-item .note-text {
+    flex-grow: 1;
+    margin-left: 10px;
+    color: #333;
+}
+
+.progress-note-item button {
+    margin-left: 10px;
+    background-color: transparent;
+    border: none;
+    color: #e53935;
+    cursor: pointer;
+    font-size: 1em;
+    transition: color 0.2s;
+}
+
+.progress-note-item button:hover {
+    color: #b71c1c;
+}
+
+/* File Tray */
+.file-tray {
+    border: 2px dashed #a3a3a3;
+    font-size: 35px;
+    padding: 20px;
+    text-align: center;
+    color: #a3a3a3;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+    background-color: #fff;
+}
+
+.file-tray.dragover {
+    border-color: #333;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+#file-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.file-item {
+    position: relative;
+    width: 100px;
+    text-align: center;
+}
+
+.file-item img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: transform 0.3s ease;
+}
+
+.file-item img:hover {
+    transform: scale(1.1);
+}
+
+.file-item .file-info {
+    display: none;
+    margin-top: 5px;
+    font-size: 0.8em;
+    word-wrap: break-word;
+    color: #333;
+}
+
+.file-item.show .file-info {
+    display: block;
+}
+
+.file-item .file-name {
+    font-weight: bold;
+    color: #333;
+}
+
+.file-item .file-path {
+    color: #555;
+}
+
+.file-item .remove-file {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 18px;
+    padding: 0;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.file-item .remove-file:hover {
+    background-color: #b71c1c;
+    transform: rotate(90deg);
+}
+
+/* Settings Modal Styles */
+.settings-modal {
+    display: none; 
+    position: fixed; 
+    z-index: 35; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgba(0,0,0,0.4); 
+    transition: opacity 0.5s ease;
+}
+
+.settings-modal-content {
+    background-color: #fff;
+    margin: 10% auto; 
+    padding: 20px;
+    border: none;
+    border-radius: 10px;
+    opacity: 0;
+    transition: opacity 0.5s ease, transform 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    width: 40%; 
+    box-sizing: border-box;
+}
+
+.settings-modal.show .settings-modal-content {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.settings-close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.settings-close-btn:hover,
+.settings-close-btn:focus {
+    color: black;
+    text-decoration: none;
+}
